@@ -62,6 +62,12 @@ NSString * const HGFontInformationSizeKey = @"HGFontInformationSizeKey";
 		else if (cur->type == pmh_attr_type_background_color)
 			toAdd[NSBackgroundColorAttributeName] = [HGMarkdownHighlightingStyle colorFromARGBColor:cur->value->argb_color];
 		
+        else if (cur->type == pmh_attr_type_strike_color)
+        {
+            toAdd[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
+            toAdd[NSStrikethroughColorAttributeName] = [HGMarkdownHighlightingStyle colorFromARGBColor:cur->value->argb_color];
+        }
+        
 		else if (cur->type == pmh_attr_type_font_style)
 		{
 			if (cur->value->font_styles->italic)

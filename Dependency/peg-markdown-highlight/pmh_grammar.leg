@@ -393,6 +393,7 @@ Inline  = Str
         | Math
         | Strong
         | Emph
+        | Strike
         | Image
         | Link
         | NoteReference
@@ -463,6 +464,13 @@ StrongUl   =    < s:LocMarker
                 ( !"__" Inline )+
                 "__" >
                 { ADD(elem_s(pmh_STRONG)); }
+
+Strike = &{ EXT(pmh_EXT_STRIKE) }
+         < s:LocMarker
+         "~~" !Whitespace
+         ( !"~~" Inline )+
+         "~~" >
+         { ADD(elem_s(pmh_STRIKE)); }
 
 Image = '!' ( ExplicitLink | ReferenceLink )
         {

@@ -1641,7 +1641,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
             }];
         }
     }
-
+    self.highlighter.extensions = pmh_EXT_STRIKE;
     [self.highlighter activate];
     self.editor.automaticLinkDetectionEnabled = NO;
 }

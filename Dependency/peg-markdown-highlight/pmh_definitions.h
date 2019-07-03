@@ -52,6 +52,7 @@ typedef enum
     pmh_HRULE,              /**< Horizontal rule */
     pmh_REFERENCE,          /**< Reference */
     pmh_NOTE,               /**< Note */
+    pmh_STRIKE,             /**< Strike-through */
     
     // Utility types used by the parser itself:
     
@@ -83,7 +84,7 @@ typedef enum
 * \brief Number of types in pmh_element_type.
 * \sa pmh_element_type
 */
-#define pmh_NUM_TYPES 30
+#define pmh_NUM_TYPES 31
 
 /**
 * \brief Number of *language element* types in pmh_element_type.
@@ -111,12 +112,16 @@ typedef struct pmh_Element pmh_element;
 
 /**
 * \brief Bitfield enumeration of supported Markdown extensions.
+*
+* // FIXME: pmh_EXT_NONE 和 pmh_EXT_NOTES 反了 ？？
 */
 enum pmh_extensions
 {
     pmh_EXT_NONE    = 0,        /**< No extensions */
-    pmh_EXT_NOTES   = (1 << 0)  /**< A footnote syntax like that of Pandoc or
-                                     PHP Markdown Extra */
+    pmh_EXT_NOTES   = (1 << 0), /**< Footnote syntax:
+                                     http://pandoc.org/README.html#footnotes */
+    pmh_EXT_STRIKE  = (1 << 1)  /**< Strike-through syntax:
+                                     http://pandoc.org/README.html#strikeout */
 };
 
 #endif
