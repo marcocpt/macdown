@@ -496,7 +496,6 @@
 		851D3DDE22CCB16800839EAD /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		852D52391E260A6400BA7162 /* MPTerminalPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPTerminalPreferencesViewController.h; sourceTree = "<group>"; };
 		852D523A1E260A6400BA7162 /* MPTerminalPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPTerminalPreferencesViewController.m; sourceTree = "<group>"; };
-		85C3B7E322CCA1CD00619E94 /* pmh_grammar.leg */ = {isa = PBXFileReference; lastKnownFileType = text; name = pmh_grammar.leg; path = "Dependency/peg-markdown-highlight/pmh_grammar.leg"; sourceTree = SOURCE_ROOT; };
 		85E24E5A1E5019C00056E696 /* MPToolbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPToolbarController.h; path = Code/Application/MPToolbarController.h; sourceTree = "<group>"; };
 		85E24E5B1E5019C00056E696 /* MPToolbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPToolbarController.m; path = Code/Application/MPToolbarController.m; sourceTree = "<group>"; };
 		8CDC5EA0050D2F722FB1AADD /* Pods-MacDownTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MacDownTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MacDownTests/Pods-MacDownTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -693,7 +692,6 @@
 				1F8A83611953461800B6BF69 /* pmh_parser.c */,
 				1F8A8365195346B600B6BF69 /* pmh_styleparser.h */,
 				1F8A8363195346B200B6BF69 /* pmh_styleparser.c */,
-				85C3B7E322CCA1CD00619E94 /* pmh_grammar.leg */,
 			);
 			name = "peg-markdown-highlight";
 			sourceTree = "<group>";
