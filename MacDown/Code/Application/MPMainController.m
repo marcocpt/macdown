@@ -24,7 +24,7 @@
 
 static NSString * const kMPTreatLastSeenStampKey = @"treatLastSeenStamp";
 
-
+/** 将 Bundle 中的指定文件复制到 tmp 目录中，然后使用 NSDocumentController 进行打开*/
 NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
 {
     NSURL *source = [[NSBundle mainBundle] URLForResource:resource
@@ -99,7 +99,7 @@ NS_INLINE void treat()
 @implementation MPMainController
 
 @synthesize preferencesWindowController = _preferencesWindowController;
-
+/** 执行 `WebCache.disabled = YES`, Registers the Apple event */
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     // Using private API [WebCache setDisabled:YES] to disable WebView's cache
@@ -183,7 +183,7 @@ NS_INLINE void treat()
     NSURLQueryItem *queryItem = [[queryItems filteredArrayUsingPredicate:predicate] firstObject];
     return queryItem.value;
 }
-
+/** 获取 MPPreferences 的单例，首次执行会初始化 */
 - (MPPreferences *)preferences
 {
     return [MPPreferences sharedInstance];
@@ -227,7 +227,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - Override
-
+/** 增加配置改变的通知，并复制配置文件到 App root 目录 */
 - (instancetype)init
 {
     self = [super init];
@@ -271,7 +271,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - Private
-
+/** 复制类型和主题文件到 App root 目录，不存在才复制*/
 - (void)copyFiles
 {
     NSFileManager *manager = [NSFileManager defaultManager];

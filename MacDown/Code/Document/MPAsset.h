@@ -11,9 +11,9 @@
 
 typedef NS_ENUM(NSInteger, MPAssetOption)
 {
-    MPAssetNone,
+    MPAssetNone,        /**< 空资源 */
     MPAssetEmbedded,
-    MPAssetFullLink,
+    MPAssetFullLink,    /**< 完整的链接 */
 };
 
 extern NSString * const kMPCSSType;

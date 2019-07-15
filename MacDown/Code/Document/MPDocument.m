@@ -32,7 +32,7 @@
 #import "MPToolbarController.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 
-static NSString * const kMPDefaultAutosaveName = @"Untitled";
+static NSString * const kMPDefaultAutosaveName = @"Untitled";       /**< 新建文档的默认名字 */
 
 
 NS_INLINE NSString *MPEditorPreferenceKeyWithValueKey(NSString *key)
@@ -43,7 +43,7 @@ NS_INLINE NSString *MPEditorPreferenceKeyWithValueKey(NSString *key)
     NSString *rest = [key substringFromIndex:1];
     return [NSString stringWithFormat:@"editor%@%@", first, rest];
 }
-
+/** 定义需要观察的编辑器的keys */
 NS_INLINE NSDictionary *MPEditorKeysToObserve()
 {
     static NSDictionary *keys = nil;
@@ -60,7 +60,7 @@ NS_INLINE NSDictionary *MPEditorKeysToObserve()
     });
     return keys;
 }
-
+/** 定义需要观察的配置的keys */
 NS_INLINE NSSet *MPEditorPreferencesToObserve()
 {
     static NSSet *keys = nil;
@@ -76,7 +76,7 @@ NS_INLINE NSSet *MPEditorPreferencesToObserve()
     });
     return keys;
 }
-
+/** 在 NSUserDefaults.standard 中获取 "NSWindow Frame \(name)" 的值 */
 NS_INLINE NSString *MPRectStringForAutosaveName(NSString *name)
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -114,7 +114,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
 
 
 @implementation WebView (Shortcut)
-
+/** Override: The nearest ancestor scroll view that contains the current view. */
 - (NSScrollView *)enclosingScrollView
 {
     return self.mainFrame.frameView.documentView.enclosingScrollView;
@@ -124,6 +124,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
 
 
 @implementation MPPreferences (Hoedown)
+/** 设置扩展标识位，包括编辑和预览中的显示设置*/
 - (int)extensionFlags
 {
     int flags = 0;
@@ -153,7 +154,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
         flags |= HOEDOWN_EXT_MATH_EXPLICIT;
     return flags;
 }
-
+/** 根据设置中的 html 属性来确定支持哪些格式的渲染 */
 - (int)rendererFlags
 {
     int flags = 0;
@@ -186,14 +187,14 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (weak) IBOutlet NSToolbar *toolbar;
 @property (weak) IBOutlet MPDocumentSplitView *splitView;
 @property (weak) IBOutlet NSView *editorContainer;
-@property (unsafe_unretained) IBOutlet MPEditorView *editor;
+@property (unsafe_unretained) IBOutlet MPEditorView *editor;        /**< 编辑视图 */
 @property (weak) IBOutlet NSLayoutConstraint *editorPaddingBottom;
 @property (weak) IBOutlet WebView *preview;
-@property (weak) IBOutlet NSPopUpButton *wordCountWidget;
+@property (weak) IBOutlet NSPopUpButton *wordCountWidget;           /**< 显示字、词计数的小部件 */
 @property (strong) IBOutlet MPToolbarController *toolbarController;
-@property (copy, nonatomic) NSString *autosaveName;
-@property (strong) HGMarkdownHighlighter *highlighter;
-@property (strong) MPRenderer *renderer;
+@property (copy, nonatomic) NSString *autosaveName;                 /**< 自动保存的默认名字，如果文件已经保存则为文件名 */
+@property (strong) HGMarkdownHighlighter *highlighter;              /**< 编辑视图的渲染器 */
+@property (strong) MPRenderer *renderer;                            /**< 预览视图的渲染器 */
 @property CGFloat previousSplitRatio;
 @property BOOL manualRender;
 @property BOOL copying;
@@ -206,10 +207,10 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (nonatomic) NSUInteger totalWords;
 @property (nonatomic) NSUInteger totalCharacters;
 @property (nonatomic) NSUInteger totalCharactersNoSpaces;
-@property (strong) NSMenuItem *wordsMenuItem;
-@property (strong) NSMenuItem *charMenuItem;
-@property (strong) NSMenuItem *charNoSpacesMenuItem;
-@property (nonatomic) BOOL needsToUnregister;
+@property (strong) NSMenuItem *wordsMenuItem;                       /**< wordCountWidget 中的统计词菜单 */
+@property (strong) NSMenuItem *charMenuItem;                        /**< wordCountWidget 中的统计字符菜单 */
+@property (strong) NSMenuItem *charNoSpacesMenuItem;                /**< wordCountWidget 中的统计字符（不含空格）菜单 */
+@property (nonatomic) BOOL needsToUnregister;                       /**< 需要取消注册（键值绑定） */
 @property (nonatomic) BOOL alreadyRenderingInWeb;
 @property (nonatomic) BOOL renderToWebPending;
 @property (strong) NSArray<NSNumber *> *webViewHeaderLocations;
@@ -255,7 +256,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 @implementation MPDocument
 
 #pragma mark - Accessor
-
+/** 获取单例 */
 - (MPPreferences *)preferences
 {
     return [MPPreferences sharedInstance];
@@ -280,12 +281,12 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return self.windowForSheet.toolbar.visible;
 }
-
+/** preview 的宽度不为0，则返回 true */
 - (BOOL)previewVisible
 {
     return (self.preview.frame.size.width != 0.0);
 }
-
+/** editorContainer 的宽度不为0，则返回 true */
 - (BOOL)editorVisible
 {
     return (self.editorContainer.frame.size.width != 0.0);
@@ -328,7 +329,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [JJPluralForm pluralStringForNumber:value withPluralForms:key
                             usingPluralRule:rule localizeNumeral:NO];
 }
-
+/** set autosaveName，同时设置分栏视图的 autosaveName 属性 */
 - (void)setAutosaveName:(NSString *)autosaveName
 {
     _autosaveName = autosaveName;
@@ -337,7 +338,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - Override
-
+/** Override: init */
 - (instancetype)init
 {
     self = [super init];
@@ -350,12 +351,12 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     
     return self;
 }
-
+/** Override: The name of the document’s sole nib file. */
 - (NSString *)windowNibName
 {
     return @"MPDocument";
 }
-
+/** Override: Sent after the specified window controller loads a nib file if the receiver is the nib file’s owner. */
 - (void)windowControllerDidLoadNib:(NSWindowController *)controller
 {
     [super windowControllerDidLoadNib:controller];
@@ -383,7 +384,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     self.renderer = [[MPRenderer alloc] init];
     self.renderer.dataSource = self;
     self.renderer.delegate = self;
-
+    // 添加观察属性，当被观察的属性改变时会调用 observeValueForKeyPath:ofObject:change:context:
     for (NSString *key in MPEditorPreferencesToObserve())
     {
         [defaults addObserver:self forKeyPath:key
@@ -394,7 +395,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self.editor addObserver:self forKeyPath:key
                          options:NSKeyValueObservingOptionNew context:NULL];
     }
-
+    // posts a NSViewFrameDidChangeNotification
     self.editor.postsFrameChangedNotifications = YES;
     self.preview.frameLoadDelegate = self;
     self.preview.policyDelegate = self;
@@ -498,17 +499,17 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
     [super close];
 }
-
+/** Returns whether the receiver supports autosaving in place. */
 + (BOOL)autosavesInPlace
 {
     return YES;
 }
-
+/** Returns the types of data the receiver can write natively and any types filterable to that native type. */
 + (NSArray *)writableTypes
 {
     return @[@"net.daringfireball.markdown"];
 }
-
+/** A Boolean value indicating whether the document has changes that have not been saved. */
 - (BOOL)isDocumentEdited
 {
     // Prevent save dialog on an unnamed, empty document. The file will still
@@ -689,7 +690,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - NSSplitViewDelegate
-
+/** NSSplitViewDelegate: Invoked by the default notification center to notify the delegate that the splitview did resize its subviews. */
 - (void)splitViewDidResizeSubviews:(NSNotification *)notification
 {
     [self redrawDivider];
@@ -971,12 +972,12 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 - (BOOL)rendererLoading {
 	return self.preview.loading;
 }
-    
+/** 编辑视图中的原始文本 */
 - (NSString *)rendererMarkdown:(MPRenderer *)renderer
 {
     return self.editor.string;
 }
-
+/** HTML渲染器的标题 */
 - (NSString *)rendererHTMLTitle:(MPRenderer *)renderer
 {
     NSString *n = self.fileURL.lastPathComponent.stringByDeletingPathExtension;
@@ -985,57 +986,57 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - MPRendererDelegate
-
+/** 获取配置中的 extensionFlags ，包括编辑和预览设置中的扩展语法设置*/
 - (int)rendererExtensions:(MPRenderer *)renderer
 {
     return self.preferences.extensionFlags;
 }
-
+/** Converts " or ' to left or right quote。Markdown 设置中：“Smartpants” */
 - (BOOL)rendererHasSmartyPants:(MPRenderer *)renderer
 {
     return self.preferences.extensionSmartyPants;
 }
-
+/** 监测 TOC 元素。Rendering 设置中：“Detect table of contents token” */
 - (BOOL)rendererRendersTOC:(MPRenderer *)renderer
 {
     return self.preferences.htmlRendersTOC;
 }
-
+/** 获取配置中的 htmlStyleName */
 - (NSString *)rendererStyleName:(MPRenderer *)renderer
 {
     return self.preferences.htmlStyleName;
 }
-
+/** 支持Jekyll front-matter(放在文件开头)。Rendering 设置中：“Detect Jekyll front-matter” */
 - (BOOL)rendererDetectsFrontMatter:(MPRenderer *)renderer
 {
     return self.preferences.htmlDetectFrontMatter;
 }
-
+/**有代码块需要语法高亮。Rendering 设置中：“Syntax highlighted code block” */
 - (BOOL)rendererHasSyntaxHighlighting:(MPRenderer *)renderer
 {
     return self.preferences.htmlSyntaxHighlighting;
 }
-
+/** TODO:代码块支持Mermaid。Rendering 设置中：“Mermaid” */
 - (BOOL)rendererHasMermaid:(MPRenderer *)renderer
 {
     return self.preferences.htmlMermaid;
 }
-
+/** TODO:代码块支持Graphviz。Rendering 设置中：“Graphviz” */
 - (BOOL)rendererHasGraphviz:(MPRenderer *)renderer
 {
     return self.preferences.htmlGraphviz;
 }
-
+/** 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryCustom 定义。Rendering 设置中：Accessory 选择 */
 - (MPCodeBlockAccessoryType)rendererCodeBlockAccesory:(MPRenderer *)renderer
 {
     return self.preferences.htmlCodeBlockAccessory;
 }
-
+/** 代码块支持MathJax。Rendering 设置中：“TeX-like math syntax” */
 - (BOOL)rendererHasMathJax:(MPRenderer *)renderer
 {
     return self.preferences.htmlMathJax;
 }
-
+/** 获取配置中的 htmlHighlightingThemeName */
 - (NSString *)rendererHighlightingThemeName:(MPRenderer *)renderer
 {
     return self.preferences.htmlHighlightingThemeName;
@@ -1124,7 +1125,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     if (self.needsHtml)
         [self.renderer parseAndRenderLater];
 }
-
+/** NSUserDefaultsDidChangeNotification 通知执行的方法。用来更新渲染预览视图 */
 - (void)userDefaultsDidChange:(NSNotification *)notification
 {
     MPRenderer *renderer = self.renderer;
@@ -1144,7 +1145,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [renderer renderIfPreferencesChanged];
     }
 }
-
+/** NSViewFrameDidChangeNotification 通知执行的方法。如果 editorWidthLimited，则调整 textContainerInset */
 - (void)editorFrameDidChange:(NSNotification *)notification
 {
     if (self.preferences.editorWidthLimited)
@@ -1201,7 +1202,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - KVO
-
+/** Informs the observing object when the value at the specified key path relative to the observed object has changed. */
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
                         change:(NSDictionary *)change context:(void *)context
 {
@@ -1645,7 +1646,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     [self.highlighter activate];
     self.editor.automaticLinkDetectionEnabled = NO;
 }
-
+/** 根据 editorMaximumWidth 属性调节 editorHorizontalInset */
 - (void)adjustEditorInsets
 {
     CGFloat x = self.preferences.editorHorizontalInset;
@@ -1661,7 +1662,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     }
     self.editor.textContainerInset = NSMakeSize(x, y);
 }
-
+/** 根据编辑视图和预览视图的状态来设置分隔栏的颜色 */
 - (void)redrawDivider
 {
     if (!self.editorVisible)

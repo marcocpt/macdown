@@ -26,7 +26,7 @@ static CGFloat itemWidth = 37;
      */
     NSMutableDictionary *toolbarItemIdentifierObjectDictionary;
 }
-
+/** init */
 - (id)init
 {
     self = [super init];
@@ -44,7 +44,7 @@ static CGFloat itemWidth = 37;
 
 
 #pragma mark - Private
-
+/** 设置工具栏的物体 */
 - (void)setupToolbarItems
 {
     // Set up layout drop down alternatives. title will be set in validateUserInterfaceItem:
@@ -123,6 +123,7 @@ static CGFloat itemWidth = 37;
 
 
 #pragma mark - NSToolbarDelegate
+/** NSToolbarDelegate: Sent to discover the default item identifiers for a toolbar */
 - (NSArray<NSString *> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
 {
     // From toolbar item dictionary(setupToolbarItems)
@@ -177,7 +178,7 @@ static CGFloat itemWidth = 37;
 {
     return [self toolbarAllowedItemIdentifiers:toolbar];
 }
-
+/** NSToolbarDelegate: Sent to request a new toolbar item; returns a toolbar item of the identified kind for the specified toolbar. */
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag
 {
     NSToolbarItem *item;

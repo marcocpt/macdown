@@ -13,7 +13,7 @@
 
 
 @implementation MPPlugInController
-
+/** 初始化所有插件 */
 - (instancetype)init
 {
     self = [super init];
@@ -53,7 +53,7 @@
     if (![plugin run:item])
         NSLog(@"Failed to run plugin %@", plugin.name);
 }
-
+/** 获取应用根目录下的 kMPPlugInsDirectoryName 中的插件 */
 - (NSArray<MPPlugIn *> *)buildPlugIns
 {
     NSArray *paths = MPListEntriesForDirectory(kMPPlugInsDirectoryName, nil);

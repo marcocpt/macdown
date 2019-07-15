@@ -16,7 +16,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 
 
 @interface MPEditorPreferencesViewController () <NSTextFieldDelegate>
-@property (weak) IBOutlet NSTextField *fontPreviewField;
+@property (weak) IBOutlet NSTextField *fontPreviewField;        /**< Editor 设置中显示 Base font */
 @property (weak) IBOutlet NSPopUpButton *themeSelect;
 @property (weak) IBOutlet NSSegmentedControl *themeFunctions;
 @end
@@ -104,7 +104,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 
 
 #pragma mark - IBAction
-
+/** 打开字体面板并选择字体作为编辑器的字体。Editor 设置中：“Change...” */
 - (IBAction)showFontPanel:(id)sender
 {
     NSFontManager *manager = [NSFontManager sharedFontManager];
@@ -116,7 +116,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
     NSFontPanel *panel = [manager fontPanel:YES];
     [panel orderFront:sender];
 }
-
+/** 选择编辑器的主题。Editor 设置中：Theme Select 下拉菜单 */
 - (IBAction)changeTheme:(NSPopUpButton *)sender
 {
     NSString *title = sender.selectedItem.title;
@@ -127,7 +127,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
     else
         self.preferences.editorStyleName = title;
 }
-
+/** Reveal: 使用 NSWorkspace 打开主题文件夹；Reload：手动加载主题。Editor 设置中：Reveal/Reload 选择 */
 - (IBAction)invokeStylesheetFunction:(NSSegmentedControl *)sender
 {
     switch (sender.selectedSegment)

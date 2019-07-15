@@ -25,23 +25,23 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 
 
 @implementation MPAsset
-
+/** 返回类型名，如果为空就返回默认的类型名 */
 - (NSString *)typeName
 {
     return _typeName ? _typeName : self.defaultTypeName;
 }
-
+/** 返回默认的类型名 */
 - (NSString *)defaultTypeName
 {
     return kMPPlainType;
 }
 
-
+/** 使用 url 和 typeName 初始化 MPAsset */
 + (instancetype)assetWithURL:(NSURL *)url andType:(NSString *)typeName
 {
     return [[self alloc] initWithURL:url andType:typeName];
 }
-
+/** 使用 url 和 typeName 初始化 MPAsset */
 - (instancetype)initWithURL:(NSURL *)url andType:(NSString *)typeName
 {
     self = [super init];
@@ -51,14 +51,16 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
     self.typeName = typeName;
     return self;
 }
-
+/** override：初始化 ,url 和 type 均为 nil */
 - (instancetype)init
 {
     return [self initWithURL:nil andType:nil];
 }
-
+/** 产生 MPAssetOption 的模板， 子类必须覆盖此方法*/
 - (NSString *)templateForOption:(MPAssetOption)option
 {
+    // `_cmd` 在 Objective-C 的方法中表示当前方法的 selector
+    // 参考：https://www.jianshu.com/p/fdb1bc445266
     NSString *reason =
         [NSString stringWithFormat:@"Method %@ requires overriding",
                                    NSStringFromSelector(_cmd)];
@@ -104,17 +106,17 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 
 
 @implementation MPStyleSheet
-
+/** 返回默认类型名 */
 - (NSString *)defaultTypeName
 {
     return kMPCSSType;
 }
-
+/** 调用父类的初始化方法 */
 + (instancetype)CSSWithURL:(NSURL *)url
 {
     return [super assetWithURL:url andType:kMPCSSType];
 }
-
+/** 产生 MPAssetOption 的模板 */
 - (NSString *)templateForOption:(MPAssetOption)option
 {
     NSString *template = nil;
@@ -142,17 +144,17 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 
 
 @implementation MPScript
-
+/** 返回默认类型名 */
 - (NSString *)defaultTypeName
 {
     return kMPJavaScriptType;
 }
-
+/** 调用父类的初始化方法 */
 + (instancetype)javaScriptWithURL:(NSURL *)url
 {
     return [super assetWithURL:url andType:kMPJavaScriptType];
 }
-
+/** 产生 MPAssetOption 的模板 */
 - (NSString *)templateForOption:(MPAssetOption)option
 {
     NSString *template = nil;

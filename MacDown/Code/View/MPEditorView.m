@@ -38,7 +38,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         return _scrollsPastEnd;
     }
 }
-
+/** awakeFromNib */
 - (void)awakeFromNib {
     [self registerForDraggedTypes:[NSArray arrayWithObjects: NSDragPboard, nil]];
     [super awakeFromNib];
@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         _contentRect = rect;
     }
 }
-
+/** Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)

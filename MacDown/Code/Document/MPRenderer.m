@@ -203,7 +203,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 @interface MPRenderer ()
 
 @property (strong) NSMutableArray *currentLanguages;
-@property (readonly) NSArray *baseStylesheets;
+@property (readonly) NSArray *baseStylesheets;          /**< MPStyleSheet 类型数组。 rendererStyleName: 获取 style name */
 @property (readonly) NSArray *prismStylesheets;
 @property (readonly) NSArray *prismScripts;
 @property (readonly) NSArray *mathjaxScripts;
@@ -303,7 +303,7 @@ NS_INLINE hoedown_buffer *language_addition(
     
     return mapped;
 }
-
+/** 创建 HTML 渲染器 */
 NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
 {
     int flags = renderer.rendererFlags;
@@ -340,7 +340,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 
 
 @implementation MPRenderer
-
+/** init */
 - (instancetype)init
 {
     self = [super init];
@@ -356,7 +356,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 }
 
 #pragma mark - Accessor
-
+/** MPStyleSheet 类型数组。 rendererStyleName: 获取默认的 style name，加入到数组中 */
 - (NSArray *)baseStylesheets
 {
     NSString *defaultStyleName =
@@ -477,7 +477,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     
     return scripts;
 }
-
+// TODO:
 - (NSArray *)stylesheets
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -501,7 +501,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     }
     return stylesheets;
 }
-
+// TODO:
 - (NSArray *)scripts
 {
     id<MPRendererDelegate> d = self.delegate;
@@ -560,17 +560,17 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         });
     }];
 }
-
+/** 立即渲染 */
 - (void)parseAndRenderNow
 {
     [self parseAndRenderWithMaxDelay:0];
 }
-
+/** 延时0.5s渲染 */
 - (void)parseAndRenderLater
 {
     [self parseAndRenderWithMaxDelay:0.5];
 }
-
+/** 如果配置改变就执行 parseMarkdown: */
 - (void)parseIfPreferencesChanged
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -582,7 +582,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         [self parseMarkdown:[self.dataSource rendererMarkdown:self]];
     }
 }
-
+/** 解析 markdown 文本，如果有 Jekyll front-matter，则从 markdown 中移除 */
 - (void)parseMarkdown:(NSString *)markdown {
     [self.currentLanguages removeAllObjects];
     
@@ -615,7 +615,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     self.TOC = hasTOC;
     self.frontMatter = hasFrontMatter;
 }
-
+/** 如果配置改变就执行 render: */
 - (void)renderIfPreferencesChanged
 {
     BOOL changed = NO;
@@ -638,7 +638,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     if (changed)
         [self render];
 }
-
+/** TODO:执行渲染 */
 - (void)render
 {
     id<MPRendererDelegate> delegate = self.delegate;

@@ -36,7 +36,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 
 @implementation MPPreferences
-
+/** 初始化默认配置 */
 - (instancetype)init
 {
     self = [super init];
@@ -197,7 +197,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 
 #pragma mark - Private
-
+/** 从 NSUserDefaults.standard.dictionaryRepresentation() 中获取 @"NSSplitView Subview Frames"、 @"NSWindow Frame"，如果是 url 类型就移除。此为老版本软件使用过。 */
 - (void)cleanupObsoleteAutosaveValues
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

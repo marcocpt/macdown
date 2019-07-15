@@ -15,12 +15,12 @@
 
 
 @implementation MPPlugIn
-
+/** set name */
 - (void)setName:(NSString *)name
 {
     _name = name;
 }
-
+/** 调用 bundle 中的 name 函数给 self.name */
 - (instancetype)initWithBundle:(NSBundle *)bundle
 {
     self = [super init];
@@ -49,13 +49,13 @@
 
     return self;
 }
-
+/** 如果插件有 plugInDidInitialize 方法，则调用 */
 - (void)plugInDidInitialize
 {
     if ([self.content respondsToSelector:@selector(plugInDidInitialize)])
         [self.content plugInDidInitialize];
 }
-
+/** f如果插件有 run: 方法，则调用，否则返回 NO */
 - (BOOL)run:(id)sender
 {
     if ([self.content respondsToSelector:@selector(run:)])

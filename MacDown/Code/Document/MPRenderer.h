@@ -10,12 +10,12 @@
 @protocol MPRendererDataSource;
 @protocol MPRendererDelegate;
 
-
+/** 预览中代码块小部件的类型 */
 typedef NS_ENUM(NSUInteger, MPCodeBlockAccessoryType)
 {
-    MPCodeBlockAccessoryNone = 0,
-    MPCodeBlockAccessoryLanguageName,
-    MPCodeBlockAccessoryCustom,
+    MPCodeBlockAccessoryNone = 0,       /**< 预览中代码块小部件 无 */
+    MPCodeBlockAccessoryLanguageName,   /**< 预览中代码块小部件 显示语言名 */
+    MPCodeBlockAccessoryCustom,         /**< 预览中代码块小部件 自定义 */
 };
 
 

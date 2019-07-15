@@ -16,7 +16,7 @@ NSString * const kMPThemesDirectoryName = @"Themes";
 NSString * const kMPThemeFileExtension = @"style";
 NSString * const kMPPlugInsDirectoryName = @"PlugIns";
 NSString * const kMPPlugInFileExtension = @"plugin";
-
+/** 获取 App 数据的根目录 “~/Library/Application Support/MacDown” */
 static NSString *MPDataRootDirectory()
 {
     static NSString *path = nil;
@@ -33,20 +33,20 @@ static NSString *MPDataRootDirectory()
     }
     return path;
 }
-
+/** 获取App 数据的根目录 + relativePath */
 NSString *MPDataDirectory(NSString *relativePath)
 {
     if (!relativePath)
         return MPDataRootDirectory();
     return [NSString pathWithComponents:@[MPDataRootDirectory(), relativePath]];
 }
-
+/** dirPath 路径下的 name 文件的路径 */
 NSString *MPPathToDataFile(NSString *name, NSString *dirPath)
 {
     return [NSString pathWithComponents:@[MPDataDirectory(dirPath),
                                           name]];
 }
-
+/** 获取 dirName 目录中的文件路径，如果 processor 不为空，则使用 processor 处理获得的路径 */
 NSArray *MPListEntriesForDirectory(
     NSString *dirName, NSString *(^processor)(NSString *absolutePath))
 {
@@ -106,7 +106,7 @@ BOOL MPStringIsNewline(NSString *str)
         return NO;
     return MPCharacterIsNewline([str characterAtIndex:0]);
 }
-
+/** 指定文件名 name 的 style 文件的路径 */
 NSString *MPStylePathForName(NSString *name)
 {
     if (!name)

@@ -18,9 +18,9 @@ NS_INLINE NSString *MPPrismDefaultThemeName()
 
 
 @interface MPHtmlPreferencesViewController ()
-@property (weak) IBOutlet NSPopUpButton *stylesheetSelect;
-@property (weak) IBOutlet NSSegmentedControl *stylesheetFunctions;
-@property (weak) IBOutlet NSPopUpButton *highlightingThemeSelect;
+@property (weak) IBOutlet NSPopUpButton *stylesheetSelect;          /**< Rendering 设置中的 CSS 选择 */
+@property (weak) IBOutlet NSSegmentedControl *stylesheetFunctions;  /**< Rendering 设置中的 Reveal/Reload 选择 */
+@property (weak) IBOutlet NSPopUpButton *highlightingThemeSelect;   /**< Rendering 设置中的 Theme 选择 */
 @end
 
 
@@ -54,7 +54,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName()
 
 
 #pragma mark - IBAction
-
+/** Rendering 设置中选择 CSS 来设置 htmlStyleName */
 - (IBAction)changeStylesheet:(NSPopUpButton *)sender
 {
     NSString *title = sender.selectedItem.title;
@@ -65,7 +65,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName()
     else
         self.preferences.htmlStyleName = title;
 }
-
+/** Rendering 设置中选择主题来设置 htmlHighlightingThemeName 属性 */
 - (IBAction)changeHighlightingTheme:(NSPopUpButton *)sender
 {
     NSString *title = sender.selectedItem.title;
@@ -74,7 +74,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName()
     else
         self.preferences.htmlHighlightingThemeName = title;
 }
-
+/** Rendering 设置中的 Reveal/Reload 选择。 Reveal：点击则打开存放Style的文件夹；Reload：发送 通知 MPDidRequestPreviewRenderNotification 来按指定的 CSS 渲染 */
 - (IBAction)invokeStylesheetFunction:(NSSegmentedControl *)sender
 {
     switch (sender.selectedSegment)
