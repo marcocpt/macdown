@@ -395,7 +395,7 @@ static NSString * const kMPBlockquoteLinePattern = @"^((?:\\> ?)+).*$";
     }
     self.selectedRange = selectedRange;
 }
-
+/** 将选中内容所包含的行的所有内容缩进 */
 - (void)indentSelectedLinesWithPadding:(NSString *)padding
 {
     NSString *content = self.string;

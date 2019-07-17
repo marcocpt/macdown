@@ -459,7 +459,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self reloadFromLoadedString];
     }];
 }
-/** 从 loadedString 属性中加载字符串，执行渲染和高亮 */
+/** 从 loadedString 属性中加载字符串给编辑器，并执行渲染和高亮 */
 - (void)reloadFromLoadedString
 {
     if (self.loadedString && self.editor && self.renderer && self.highlighter)
@@ -521,7 +521,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return NO;
     return [super isDocumentEdited];
 }
-
+/** override: 当打开自动保存时，每次修改都会调用来保存内容 */
 - (BOOL)writeToURL:(NSURL *)url ofType:(NSString *)typeName
              error:(NSError *__autoreleasing *)outError
 {
@@ -544,7 +544,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return [self.editor.string dataUsingEncoding:NSUTF8StringEncoding];
 }
-/** override:  */
+/** override: TODO:读取上次退出未保存的文本加载到编辑器 */
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName
                error:(NSError **)outError
 {
@@ -701,7 +701,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - NSTextViewDelegate
-
+/** NSTextViewDelegate：处理特殊的功能键(Tab、退格键、换行等) */
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     if (commandSelector == @selector(insertTab:))
@@ -716,7 +716,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return ![self textViewShouldMoveToLeftEndOfLine:textView];
     return NO;
 }
-
+/** NSTextViewDelegate： */
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)range
                                               replacementString:(NSString *)str
 {
