@@ -34,7 +34,7 @@
 
 static NSString * const kMPDefaultAutosaveName = @"Untitled";       /**< 新建文档的默认名字 */
 
-
+/** 使用 key 合成（首字母大写并加e editor 前缀）编辑器的配置 key */
 NS_INLINE NSString *MPEditorPreferenceKeyWithValueKey(NSString *key)
 {
     if (!key.length)
@@ -217,7 +217,7 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (strong) NSArray<NSNumber *> *editorHeaderLocations;
 @property (nonatomic) BOOL inLiveScroll;
 
-// Store file content in initializer until nib is loaded.
+/** Store file content in initializer until nib is loaded. 未保存的内容*/
 @property (copy) NSString *loadedString;
 
 - (void)scaleWebview;
@@ -291,7 +291,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return (self.editorContainer.frame.size.width != 0.0);
 }
-
+/** 不是手动渲染，预览视图可见或编辑器显示 wordCountWidget */
 - (BOOL)needsHtml
 {
     if (self.preferences.markdownManualRender)
@@ -459,7 +459,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self reloadFromLoadedString];
     }];
 }
-
+/** 从 loadedString 属性中加载字符串，执行渲染和高亮 */
 - (void)reloadFromLoadedString
 {
     if (self.loadedString && self.editor && self.renderer && self.highlighter)
@@ -499,17 +499,19 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
     [super close];
 }
-/** Returns whether the receiver supports autosaving in place. */
+/** override: Returns whether the receiver supports autosaving in place. */
 + (BOOL)autosavesInPlace
 {
     return YES;
 }
-/** Returns the types of data the receiver can write natively and any types filterable to that native type. */
+/** override: Returns the types of data the receiver can write natively and any types filterable to that native type. */
 + (NSArray *)writableTypes
 {
     return @[@"net.daringfireball.markdown"];
 }
-/** A Boolean value indicating whether the document has changes that have not been saved. */
+/** override: A Boolean value indicating whether the document has changes that have not been saved.
+ 当前文档没有存储路径且编辑器字符串长度为0则返回 NO
+ */
 - (BOOL)isDocumentEdited
 {
     // Prevent save dialog on an unnamed, empty document. The file will still
@@ -542,7 +544,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return [self.editor.string dataUsingEncoding:NSUTF8StringEncoding];
 }
-
+/** override:  */
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName
                error:(NSError **)outError
 {
@@ -832,7 +834,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - WebResourceLoadDelegate
-
+/** 如果 request 是 MathJax，则使用包中的 MathJax.js 替换 queryItems */
 - (NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     
@@ -968,7 +970,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 }
 
 #pragma mark - MPRendererDataSource
-
+/** A Boolean that indicates whether the web view is loading content. */
 - (BOOL)rendererLoading {
 	return self.preview.loading;
 }
@@ -1119,7 +1121,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - Notification handler
-
+/** 收到 NSTextDidChangeNotification 通知后执行。 */
 - (void)editorTextDidChange:(NSNotification *)notification
 {
     if (self.needsHtml)
@@ -1521,7 +1523,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self setSplitViewDividerLocation:self.previousSplitRatio];
     }
 }
-/** 首先取消编辑器的高亮解析， */
+/** 根据 changeKey 来调用不同的配置，如果 changeKey 为空，则大部分的配置都调用 */
 - (void)setupEditor:(NSString *)changedKey
 {
     [self.highlighter deactivate];

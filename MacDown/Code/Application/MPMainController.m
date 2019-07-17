@@ -49,7 +49,7 @@ NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
              [wc.window setFrame:frame display:YES];
      }];
 }
-
+/** 恶搞... */
 NS_INLINE void treat()
 {
     NSDictionary *info = MPGetDataMap(@"treats");
@@ -244,7 +244,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - NSApplicationDelegate
-
+/** NSApplicationDelegate: Invoked immediately before opening an untitled file. */
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
     if (self.preferences.filesToOpen.count || self.preferences.pipedContentFileToOpen)

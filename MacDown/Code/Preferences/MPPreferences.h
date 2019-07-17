@@ -17,7 +17,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) NSString *firstVersionInstalled;         /**< 已经安装的第一版 */
 @property (assign) NSString *latestVersionInstalled;        /**< 已经安装的最新版 */
 @property (assign) BOOL updateIncludesPreReleases;          /**< 包含预览版的更新提示。General 设置中：“Include pre-releases” */
-@property (assign) BOOL supressesUntitledDocumentOnLaunch;  /**< 启动时打开空白文档。General 设置中：“Ensure open document on launch” */
+@property (assign) BOOL supressesUntitledDocumentOnLaunch;  /**< 抑制启动时打开空白文档。General 设置中：“Ensure open document on launch” 取反*/
 @property (assign) BOOL createFileForLinkTarget;            /**< TODO: 自动为链接目标创建文件。General 设置中：“Automatically create files for link targets” */
 
 // Extension flags.
@@ -37,7 +37,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 
 @property (assign) BOOL markdownManualRender;               /**< 输入文字时自动更新预览。General 设置中：“Update preview automatically as you type” */
 
-@property (assign) NSDictionary *editorBaseFontInfo;
+@property (assign) NSDictionary *editorBaseFontInfo;        /**< 存放编辑器的基础字体信息，包括字体名、字体大小 */
 @property (assign) BOOL editorAutoIncrementNumberedLists;   /**< 在有序列表中编号数自动加1。Editor 设置中："Auto-increment numbering in ordered lists" */
 @property (assign) BOOL editorConvertTabs;                  /**< 编辑器中使用空格替代制表符。Editor 设置中："Insert spaces instead of tabs" */
 @property (assign) BOOL editorInsertPrefixInBlock;          /**< TODO:。Editor 设置中："Automatically insert line prefix for the current blocks" */
@@ -85,6 +85,6 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 
 // Convinience methods.
 @property (nonatomic, assign) NSArray *filesToOpen;
-@property (nonatomic, assign) NSString *pipedContentFileToOpen;
+@property (nonatomic, assign) NSString *pipedContentFileToOpen; /**< TODO: */
 
 @end

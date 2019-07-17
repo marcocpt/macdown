@@ -8,7 +8,7 @@
 
 #import "MPEditorView.h"
 
-
+/** 判断 NSRect 是否相等（比较长、宽和 origin ） */
 NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 {
     return (r1.origin.x == r2.origin.x && r1.origin.y == r2.origin.y
@@ -38,12 +38,12 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         return _scrollsPastEnd;
     }
 }
-/** awakeFromNib */
+/** override: 编辑器视图注册剪切板拖动 */
 - (void)awakeFromNib {
     [self registerForDraggedTypes:[NSArray arrayWithObjects: NSDragPboard, nil]];
     [super awakeFromNib];
 }
-
+#pragma mark - NSDraggingDestination
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
@@ -92,7 +92,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
     return YES;
 }
 
-
+/** TODO: */
 - (void)setScrollsPastEnd:(BOOL)scrollsPastEnd
 {
     @synchronized(self) {
@@ -110,7 +110,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         }
     }
 }
-
+/** 如果 _contentRect 等于 NSZeroRect，就返回 self.frame，否则返回 _contentRect */
 - (NSRect)contentRect
 {
     @synchronized(self) {
@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         _contentRect = rect;
     }
 }
-/** Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
+/** ovarride: Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)

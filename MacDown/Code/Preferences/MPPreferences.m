@@ -129,18 +129,18 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 // Private preference.
 @dynamic editorBaseFontInfo;
-
+/** 获取基本的字体名字 */
 - (NSString *)editorBaseFontName
 {
     return [self.editorBaseFontInfo[kMPDefaultEditorFontNameKey] copy];
 }
-
+/** 获取基本的字体大小 */
 - (CGFloat)editorBaseFontSize
 {
     NSDictionary *info = self.editorBaseFontInfo;
     return [info[kMPDefaultEditorFontPointSizeKey] doubleValue];
 }
-
+/** 获取基本的字体 */
 - (NSFont *)editorBaseFont
 {
     return [NSFont fontWithName:self.editorBaseFontName

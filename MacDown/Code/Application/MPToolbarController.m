@@ -26,7 +26,7 @@ static CGFloat itemWidth = 37;
      */
     NSMutableDictionary *toolbarItemIdentifierObjectDictionary;
 }
-/** init */
+/** override */
 - (id)init
 {
     self = [super init];

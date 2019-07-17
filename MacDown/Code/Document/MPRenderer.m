@@ -531,7 +531,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 }
 
 #pragma mark - Public
-    
+/** 延时渲染编辑器文本 */
 - (void)parseAndRenderWithMaxDelay:(NSTimeInterval)maxDelay {
     [self.parseQueue cancelAllOperations];
     [self.parseQueue addOperationWithBlock:^{
@@ -560,7 +560,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         });
     }];
 }
-/** 立即渲染 */
+/** 立即渲染编辑文本 */
 - (void)parseAndRenderNow
 {
     [self parseAndRenderWithMaxDelay:0];
@@ -638,7 +638,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     if (changed)
         [self render];
 }
-/** 调用 MPGetHTML 产生渲染后的 html 文本 */
+/** 调用 MPGetHTML 产生渲染后的 html 文本用于预览视图中显示 */
 - (void)render
 {
     id<MPRendererDelegate> delegate = self.delegate;
