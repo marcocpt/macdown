@@ -12,7 +12,7 @@
 typedef NS_ENUM(NSInteger, MPAssetOption)
 {
     MPAssetNone,        /**< 空资源 */
-    MPAssetEmbedded,
+    MPAssetEmbedded,    /**< 内嵌资源，导出为 HTML 格式文件时会指定此类型，MPEmbeddedScript 中也指定此类型 */
     MPAssetFullLink,    /**< 完整的链接 */
 };
 

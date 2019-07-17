@@ -99,7 +99,7 @@ NS_INLINE void treat()
 @implementation MPMainController
 
 @synthesize preferencesWindowController = _preferencesWindowController;
-/** 执行 `WebCache.disabled = YES`, Registers the Apple event */
+/** 执行 `WebCache.disabled = YES`(private API), Registers the Apple event */
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     // Using private API [WebCache setDisabled:YES] to disable WebView's cache
@@ -123,8 +123,8 @@ NS_INLINE void treat()
           forEventClass:kInternetEventClass andEventID:kAEGetURL];
 }
 
-// Open a file from a browser with url of the form :
-// "x-macdown://open?url=file:///path/to/a/file&line=123&column=45"
+/** Open a file from a browser with url of the form :
+ "x-macdown://open?url=file:///path/to/a/file&line=123&column=45" */
 - (void)openUrlSchemeAppleEvent:(NSAppleEventDescriptor *)event
                  withReplyEvent:(NSAppleEventDescriptor *)reply
 {

@@ -51,7 +51,7 @@
         [[NSRegularExpression alloc] initWithPattern:p options:0 error:NULL];
     return [e matchesInString:self options:0 range:NSMakeRange(0, self.length)];
 }
-
+/** 找到 Jekyll front-matter，计数出偏移的位置并用 YAMLSerialization 解析 */
 - (id)frontMatter:(NSUInteger *)contentOffset
 {
     static NSString *pattern =

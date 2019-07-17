@@ -183,7 +183,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
                           forKey:kMPFilesToOpenKey
                     inSuiteNamed:kMPApplicationSuiteName];
 }
-
+/** 获取 kMPApplicationSuiteName 中 kMPPipedContentFileToOpen 的值 */
 - (NSString *)pipedContentFileToOpen {
     return [self.userDefaults objectForKey:kMPPipedContentFileToOpen
                               inSuiteNamed:kMPApplicationSuiteName];

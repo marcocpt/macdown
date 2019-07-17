@@ -18,7 +18,7 @@
     [self addSuiteNamed:suiteName];
     return self;
 }
-
+/** 调用 CFPreferencesCopyValue 来获取给定域中 plist 文件中配置的值 */
 - (id)objectForKey:(NSString *)key inSuiteNamed:(NSString *)suiteName
 {
     id value = (__bridge id)CFPreferencesCopyValue(

@@ -32,7 +32,7 @@ static NSString * const kMPPrismPluginDirectory = @"Prism/plugins";
 static size_t kMPRendererNestingLevel = SIZE_MAX;
 static int kMPRendererTOCLevel = 6;  // h1 to h6.
 
-
+/** 获取 Extensions 目录中的资源路径 */
 NS_INLINE NSURL *MPExtensionURL(NSString *name, NSString *extension)
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -40,7 +40,7 @@ NS_INLINE NSURL *MPExtensionURL(NSString *name, NSString *extension)
                            subdirectory:@"Extensions"];
     return url;
 }
-
+/** 获取 Prism（语法高亮插件）中的资源路径 */
 NS_INLINE NSURL *MPPrismPluginURL(NSString *name, NSString *extension)
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -92,7 +92,7 @@ NS_INLINE NSArray *MPPrismScriptURLsForLanguage(NSString *language)
         [urls addObject:extraUrl];
     return urls;
 }
-
+/** markdown 文本转换为 html 格式文本，并处理 Smartpants，TOC 和 frontMatter 。*/
 NS_INLINE NSString *MPHTMLFromMarkdown(
     NSString *text, int flags, BOOL smartypants, NSString *frontMatter,
     hoedown_renderer *htmlRenderer, hoedown_renderer *tocRenderer)
@@ -143,7 +143,7 @@ NS_INLINE NSString *MPHTMLFromMarkdown(
     
     return result;
 }
-
+/** 生成渲染后的 HTML，包含 title、style、body 和 script */
 NS_INLINE NSString *MPGetHTML(
     NSString *title, NSString *body, NSArray *styles, MPAssetOption styleopt,
     NSArray *scripts, MPAssetOption scriptopt)
@@ -192,7 +192,7 @@ NS_INLINE NSString *MPGetHTML(
                                                   error:NULL];
     return html;
 }
-
+/** 判断两字符串是否相等（都为 nil 也相等） */
 NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 {
     // The == part takes care of cases where s1 and s2 are both nil.
@@ -204,7 +204,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 
 @property (strong) NSMutableArray *currentLanguages;
 @property (readonly) NSArray *baseStylesheets;          /**< MPStyleSheet 类型数组。 rendererStyleName: 获取 style name */
-@property (readonly) NSArray *prismStylesheets;
+@property (readonly) NSArray *prismStylesheets;         /**< 添加代码语法高亮、代码块行数和代码块显示语言标签的 css 文件 */
 @property (readonly) NSArray *prismScripts;
 @property (readonly) NSArray *mathjaxScripts;
 @property (readonly) NSArray *mermaidStylesheets;
@@ -212,7 +212,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 @property (readonly) NSArray *graphvizScripts;
 @property (readonly) NSArray *stylesheets;
 @property (readonly) NSArray *scripts;
-@property (copy) NSString *currentHtml;
+@property (copy) NSString *currentHtml;                 /**< parseMarkdown: 函数中解析 markdown 后生成的 html 字符串 */
 @property (strong) NSOperationQueue *parseQueue;
 @property int extensions;
 @property BOOL smartypants;
@@ -303,7 +303,7 @@ NS_INLINE hoedown_buffer *language_addition(
     
     return mapped;
 }
-/** 创建 HTML 渲染器 */
+/** 使用 MPRenderer 创建 HTML hoedown 渲染器 */
 NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
 {
     int flags = renderer.rendererFlags;
@@ -320,7 +320,7 @@ NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
     ((hoedown_html_renderer_state *)htmlRenderer->opaque)->opaque = extra;
     return htmlRenderer;
 }
-
+/** 创建 HTML 的 TOC 渲染器 */
 NS_INLINE hoedown_renderer *MPCreateHTMLTOCRenderer()
 {
     hoedown_renderer *tocRenderer =
@@ -328,7 +328,7 @@ NS_INLINE hoedown_renderer *MPCreateHTMLTOCRenderer()
     tocRenderer->header = hoedown_patch_render_toc_header;
     return tocRenderer;
 }
-
+/** 释放渲染器 */
 NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 {
     hoedown_html_renderer_state_extra *extra =
@@ -368,7 +368,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     [stylesheets addObject:[MPStyleSheet CSSWithURL:defaultStyle]];
     return stylesheets;
 }
-
+/** 添加代码语法高亮、代码块行数和代码块显示语言标签的 css 文件 */
 - (NSArray *)prismStylesheets
 {
     NSString *name = [self.delegate rendererHighlightingThemeName:self];
@@ -391,7 +391,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 
     return stylesheets;
 }
-
+/** 添加代码语法高亮(prism-core.min + ... )、代码块行数和代码块显示语言标签的 js 文件 */
 - (NSArray *)prismScripts
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -433,7 +433,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     [scripts addObject:[MPScript javaScriptWithURL:url]];
     return scripts;
 }
-
+/** mermaid(画流程图）的 css, 返回 MPStyleSheet 类型数组 */
 - (NSArray *)mermaidStylesheets
 {
     NSMutableArray *stylesheets = [NSMutableArray array];
@@ -477,7 +477,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     
     return scripts;
 }
-// TODO:
+/** 根据配置添加 self.baseStylesheets、self.prismStylesheets、self.mermaidStylesheets 和 show-information.css */
 - (NSArray *)stylesheets
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -501,7 +501,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     }
     return stylesheets;
 }
-// TODO:
+/** 根据配置添加 tasklist.js、 self.prismScripts、self.mermaidScripts、self.graphvizScripts 和 self.mathjaxScripts */
 - (NSArray *)scripts
 {
     id<MPRendererDelegate> d = self.delegate;
@@ -570,7 +570,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 {
     [self parseAndRenderWithMaxDelay:0.5];
 }
-/** 如果配置改变就执行 parseMarkdown: */
+/** 如果配置改变就执行 parseMarkdown: 来解析正文 */
 - (void)parseIfPreferencesChanged
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -582,7 +582,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         [self parseMarkdown:[self.dataSource rendererMarkdown:self]];
     }
 }
-/** 解析 markdown 文本，如果有 Jekyll front-matter，则从 markdown 中移除 */
+/** 解析 markdown 文本，同时z处理 frontmatter， TOC，将解析得到的 html 赋给 self.currentHtml */
 - (void)parseMarkdown:(NSString *)markdown {
     [self.currentLanguages removeAllObjects];
     
@@ -602,12 +602,12 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     hoedown_renderer *htmlRenderer = MPCreateHTMLRenderer(self);
     hoedown_renderer *tocRenderer = NULL;
     if (hasTOC)
-    tocRenderer = MPCreateHTMLTOCRenderer();
+        tocRenderer = MPCreateHTMLTOCRenderer();
     self.currentHtml = MPHTMLFromMarkdown(
                                           markdown, extensions, smartypants, [frontMatter HTMLTable],
                                           htmlRenderer, tocRenderer);
     if (tocRenderer)
-    hoedown_html_renderer_free(tocRenderer);
+        hoedown_html_renderer_free(tocRenderer);
     MPFreeHTMLRenderer(htmlRenderer);
     
     self.extensions = extensions;
@@ -638,7 +638,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     if (changed)
         [self render];
 }
-/** TODO:执行渲染 */
+/** 调用 MPGetHTML 产生渲染后的 html 文本 */
 - (void)render
 {
     id<MPRendererDelegate> delegate = self.delegate;

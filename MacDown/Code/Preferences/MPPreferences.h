@@ -59,7 +59,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 
 @property (assign) BOOL previewZoomRelativeToBaseFontSize;  /**< 依据编辑器的字体尺寸来缩放预览。Rendering 设置中：“Scale preview based on editor font size” */
 
-@property (assign) NSString *htmlTemplateName;
+@property (assign) NSString *htmlTemplateName;              /**< html 模板的名字 */
 @property (assign) NSString *htmlStyleName;
 @property (assign) BOOL htmlDetectFrontMatter;              /**< 支持Jekyll front-matter(放在文件开头)。Rendering 设置中：“Detect Jekyll front-matter” */
 @property (assign) BOOL htmlTaskList;                       /**< 支持任务列表。Rendering 设置中：“Task list syntax” */
@@ -71,7 +71,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) BOOL htmlLineNumbers;                    /**< 代码块需要显示行数。Rendering 设置中：“Show line numbers” */
 @property (assign) BOOL htmlGraphviz;                       /**< 代码块支持Graphviz(Graph Visualization)。Rendering 设置中：“Graphviz”。 @seealso https://github.com/MacDownApp/macdown/pull/625 */
 @property (assign) BOOL htmlMermaid;                        /**< 代码块支持Mermaid(Graph Visualization)。Rendering 设置中：“Mermaid”。 @seealso https://github.com/MacDownApp/macdown/pull/625 */
-@property (assign) NSInteger htmlCodeBlockAccessory;        /**< 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryCustom 定义。Rendering 设置中：Accessory 选择 */
+@property (assign) NSInteger htmlCodeBlockAccessory;        /**< 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryType 定义。Rendering 设置中：Accessory 选择 */
 @property (assign) NSURL *htmlDefaultDirectoryUrl;
 @property (assign) BOOL htmlRendersTOC;                     /**< 监测 TOC 元素。Rendering 设置中：“Detect table of contents token” */
 

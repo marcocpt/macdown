@@ -909,7 +909,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - WebPolicyDelegate
-
+/** 点击链接时打开浏览器 */
 - (void)webView:(WebView *)webView
                 decidePolicyForNavigationAction:(NSDictionary *)information
         request:(NSURLRequest *)request frame:(WebFrame *)frame
@@ -1016,17 +1016,17 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return self.preferences.htmlSyntaxHighlighting;
 }
-/** TODO:代码块支持Mermaid。Rendering 设置中：“Mermaid” */
+/** 代码块支持Mermaid(Graph Visualization)。Rendering 设置中：“Mermaid”。*/
 - (BOOL)rendererHasMermaid:(MPRenderer *)renderer
 {
     return self.preferences.htmlMermaid;
 }
-/** TODO:代码块支持Graphviz。Rendering 设置中：“Graphviz” */
+/** 代码块支持Graphviz(Graph Visualization)。Rendering 设置中：“Graphviz”。 */
 - (BOOL)rendererHasGraphviz:(MPRenderer *)renderer
 {
     return self.preferences.htmlGraphviz;
 }
-/** 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryCustom 定义。Rendering 设置中：Accessory 选择 */
+/** 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryType 定义。Rendering 设置中：Accessory 选择 */
 - (MPCodeBlockAccessoryType)rendererCodeBlockAccesory:(MPRenderer *)renderer
 {
     return self.preferences.htmlCodeBlockAccessory;
@@ -1041,7 +1041,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return self.preferences.htmlHighlightingThemeName;
 }
-
+/** 使用已渲染的 html 文本在预览视图中显示。当前未实现局部替换 */
 - (void)renderer:(MPRenderer *)renderer didProduceHTMLOutput:(NSString *)html
 {
     if (self.alreadyRenderingInWeb)
@@ -1521,7 +1521,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self setSplitViewDividerLocation:self.previousSplitRatio];
     }
 }
-
+/** 首先取消编辑器的高亮解析， */
 - (void)setupEditor:(NSString *)changedKey
 {
     [self.highlighter deactivate];
