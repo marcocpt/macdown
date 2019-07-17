@@ -544,7 +544,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return [self.editor.string dataUsingEncoding:NSUTF8StringEncoding];
 }
-/** override: TODO:读取上次退出未保存的文本加载到编辑器 */
+/** override: 读取上次退出未保存的文本加载到编辑器 */
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName
                error:(NSError **)outError
 {

@@ -119,14 +119,14 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         return _contentRect;
     }
 }
-
+/** 设置 _contentRect */
 - (void)setContentRect:(NSRect)rect
 {
     @synchronized(self) {
         _contentRect = rect;
     }
 }
-/** ovarride: Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
+/** ovarride: TODO: Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)
