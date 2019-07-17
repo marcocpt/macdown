@@ -653,7 +653,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
                     didPrintSelector:@selector(document:didPrint:context:)
                          contextInfo:(void *)invocation];
 }
-
+/** override：添加更新几个菜单栏的标题 */
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
 {
     BOOL result = [super validateUserInterfaceItem:item];
@@ -716,7 +716,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return ![self textViewShouldMoveToLeftEndOfLine:textView];
     return NO;
 }
-/** NSTextViewDelegate： */
+/** NSTextViewDelegate：编辑器文本改变时执行。对输入的文字应用前一个字符的属性 */
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)range
                                               replacementString:(NSString *)str
 {

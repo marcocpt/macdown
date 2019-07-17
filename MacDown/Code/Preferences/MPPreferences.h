@@ -53,7 +53,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) BOOL editorOnRight;                      /**< 编辑器位于右边。General 设置中：“Put editor on the right” */
 @property (assign) BOOL editorShowWordCount;                /**< 在编辑器中，wordCountWidget 是否显示。General 设置中：“Show word count” */
 @property (assign) NSInteger editorWordCountType;           /**< wordCountWidget 中的统计菜单的类型 */
-@property (assign) BOOL editorScrollsPastEnd;               /**< TODO:。Editor 设置中："Scroll past end" */
+@property (assign) BOOL editorScrollsPastEnd;               /**< 滚动可超过文档底部。Editor 设置中："Scroll past end" */
 @property (assign) BOOL editorEnsuresNewlineAtEndOfFile;    /**< 确保保存文件末尾的换行符。Editor 设置中："Ensure newline at end of file on save" */
 @property (assign) NSInteger editorUnorderedListMarkerType; /**< 编辑器中无序列表的标记类型。Editor 设置中：“List marker" 右边的文本框 */
 

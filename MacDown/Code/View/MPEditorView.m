@@ -92,7 +92,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
     return YES;
 }
 
-/** TODO: */
+/** 滚动可超过文档底部。Editor 设置中："Scroll past end"。 */
 - (void)setScrollsPastEnd:(BOOL)scrollsPastEnd
 {
     @synchronized(self) {
@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         _contentRect = rect;
     }
 }
-/** ovarride: TODO: Sets the size of the view’s frame rectangle to the specified dimensions, resizing it within its superview without affecting its coordinate system. */
+/** ovarride: 如果滚动可超过文档底部，则高度尺寸增加*/
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)
@@ -180,7 +180,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 
 
 #pragma mark - Private
-
+/** 实现滚动可超过文档底部的逻辑 */
 - (void)updateContentGeometry
 {
     static NSCharacterSet *visibleCharacterSet = nil;
