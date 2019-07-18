@@ -203,7 +203,7 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property BOOL isPreviewReady;
 @property (strong) NSURL *currentBaseUrl;
 @property CGFloat lastPreviewScrollTop;
-@property (nonatomic, readonly) BOOL needsHtml;
+@property (nonatomic, readonly) BOOL needsHtml;                     /**< 不是手动渲染，预览视图可见或编辑器显示 wordCountWidget */
 @property (nonatomic) NSUInteger totalWords;
 @property (nonatomic) NSUInteger totalCharacters;
 @property (nonatomic) NSUInteger totalCharactersNoSpaces;
@@ -521,7 +521,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return NO;
     return [super isDocumentEdited];
 }
-/** override: 当打开自动保存时，每次修改都会调用来保存内容 */
+/** override: 当打开自动保存时，每次修改都会调用来保存内容。 如果配置中 editorEnsuresNewlineAtEndOfFile，且最后没有换行符则增加 */
 - (BOOL)writeToURL:(NSURL *)url ofType:(NSString *)typeName
              error:(NSError *__autoreleasing *)outError
 {
@@ -539,7 +539,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     }
     return [super writeToURL:url ofType:typeName error:outError];
 }
-
+/** overri: 使用 UTF8 编码编辑器的文本 */
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
 {
     return [self.editor.string dataUsingEncoding:NSUTF8StringEncoding];
@@ -557,7 +557,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     [self reloadFromLoadedString];
     return YES;
 }
-
+/** override: 点击 save 时调用来打开 save 面板 */
 - (BOOL)prepareSavePanel:(NSSavePanel *)savePanel
 {
     savePanel.extensionHidden = NO;
@@ -716,7 +716,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return ![self textViewShouldMoveToLeftEndOfLine:textView];
     return NO;
 }
-/** NSTextViewDelegate：编辑器文本改变时执行。对输入的文字应用前一个字符的属性 */
+/** NSTextViewDelegate：编辑器文本改变时执行。配置中 editorCompleteMatchingCharacters 则匹配字符自动完成。对输入的文字应用前一个字符的属性 */
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)range
                                               replacementString:(NSString *)str
 {
@@ -1864,7 +1864,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self.renderer parseAndRenderNow];
     [self setupEditor:NSStringFromSelector(@selector(editorHorizontalInset))];
 }
-
+/** 推测用于保存的文件名，如果没找到就用 Untitled */
 - (NSString *)presumedFileName
 {
     if (self.fileURL)
@@ -1880,7 +1880,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     title = string.titleString;
     if (!title)
         return NSLocalizedString(@"Untitled", @"default filename if no title can be determined");
-
+    // 在6级标题中找到最大的，则替换标题中的‘/'、':' 为 '-'
     static NSRegularExpression *regex = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

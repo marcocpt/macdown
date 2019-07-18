@@ -85,7 +85,7 @@
         *contentOffset = [result rangeAtIndex:0].length;
     return objects[0];
 }
-
+/** 找到6级标题中的最大的一个 */
 - (NSString *)titleString
 {
     NSString *pattern = @"\\s+(\\S.*)$";

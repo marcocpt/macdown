@@ -26,7 +26,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 
 
 #pragma mark - MASPreferencesViewController
-
+/** MASPreferencesViewController：Unique identifier of the Panel represented by the view controller. */
 - (NSString *)viewIdentifier
 {
     return @"EditorPreferences";
@@ -53,7 +53,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 
 
 #pragma mark - Private
-
+/** 更新 Editor 设置中显示 Base font 的文本框 */
 - (void)refreshPreviewForFont:(NSFont *)font
 {
     NSString *text = [NSString stringWithFormat:@"%@ - %.1lf",
@@ -61,7 +61,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
     self.fontPreviewField.stringValue = text;
     self.fontPreviewField.font = font;
 }
-
+/** 加载可选的主题 */
 - (void)loadThemes
 {
     [self.themeSelect setEnabled:NO];
@@ -84,7 +84,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 
 
 #pragma mark - NSFontManager Delegate
-
+/** NSFontManager Delegate: 设置面板中改变了字体 */
 - (void)changeFont:(NSFontManager *)sender
 {
     NSFont *font = [sender convertFont:sender.selectedFont];

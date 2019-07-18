@@ -188,7 +188,7 @@ NS_INLINE void treat()
 {
     return [MPPreferences sharedInstance];
 }
-
+/** 初始化配置窗口控制器，添加各个面板的控制器 */
 - (NSWindowController *)preferencesWindowController
 {
     if (!_preferencesWindowController)
@@ -209,7 +209,7 @@ NS_INLINE void treat()
     }
     return _preferencesWindowController;
 }
-
+/** 显示配置窗口 */
 - (IBAction)showPreferencesWindow:(id)sender
 {
     [self.preferencesWindowController showWindow:nil];

@@ -27,7 +27,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName()
 @implementation MPHtmlPreferencesViewController
 
 #pragma mark - MASPreferencesViewController
-
+/** MASPreferencesViewController：Unique identifier of the Panel represented by the view controller. */
 - (NSString *)viewIdentifier
 {
     return @"HtmlPreferences";

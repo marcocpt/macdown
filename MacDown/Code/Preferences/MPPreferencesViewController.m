@@ -16,7 +16,7 @@ NSString * const MPDidRequestEditorSetupNotification =
     @"MPDidRequestEditorSetupNotificationName";
 
 @implementation MPPreferencesViewController
-
+/** override */
 - (id)init
 {
     return [self initWithNibName:NSStringFromClass(self.class)

@@ -95,7 +95,7 @@ static NSString * const kMPBlockquoteLinePattern = @"^((?:\\> ?)+).*$";
         spaces = [spaces substringFromIndex:offset];
     [self insertText:spaces];
 }
-
+/** 完成匹配字符 */
 - (BOOL)completeMatchingCharactersForTextInRange:(NSRange)range
                                       withString:(NSString *)str
                             strikethroughEnabled:(BOOL)strikethrough
@@ -121,7 +121,7 @@ static NSString * const kMPBlockquoteLinePattern = @"^((?:\\> ?)+).*$";
     }
     return NO;
 }
-// TODO:
+/** TODO: 为输入字符完成自动匹配 */
 - (BOOL)completeMatchingCharacterForText:(NSString *)string
                               atLocation:(NSUInteger)location
 {
@@ -130,7 +130,7 @@ static NSString * const kMPBlockquoteLinePattern = @"^((?:\\> ?)+).*$";
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *s =
             [NSMutableCharacterSet whitespaceAndNewlineCharacterSet];
-        [s formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+      [s formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]]; // punctuationCharacterSet:标点符号
         boundaryCharacters = [s copy];
     });
     NSString *content = self.string;
@@ -204,7 +204,7 @@ static NSString * const kMPBlockquoteLinePattern = @"^((?:\\> ?)+).*$";
     range.location += 1;
     self.selectedRange = range;
 }
-
+// TODO:
 - (BOOL)wrapMatchingCharactersOfCharacter:(unichar)character
                         aroundTextInRange:(NSRange)range
                      strikethroughEnabled:(BOOL)isStrikethroughEnabled

@@ -30,7 +30,7 @@
 
 
 #pragma mark - NSMenuDelegate
-
+/** NSMenuDelegate: TODO: 只更新插件菜单？ */
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
     [menu removeAllItems];
