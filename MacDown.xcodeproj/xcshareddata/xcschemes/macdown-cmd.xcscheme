@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1FA6DE201941CC9E000409FB"
-               BuildableName = "MacDown.app"
-               BlueprintName = "MacDown"
+               BlueprintIdentifier = "905EF1A6196164CA00FC3CE9"
+               BuildableName = "macdown"
+               BlueprintName = "macdown-cmd"
                ReferencedContainer = "container:MacDown.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,23 +28,13 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1FA6DE441941CC9E000409FB"
-               BuildableName = "MacDownTests.xctest"
-               BlueprintName = "MacDownTests"
-               ReferencedContainer = "container:MacDown.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1FA6DE201941CC9E000409FB"
-            BuildableName = "MacDown.app"
-            BlueprintName = "MacDown"
+            BlueprintIdentifier = "905EF1A6196164CA00FC3CE9"
+            BuildableName = "macdown"
+            BlueprintName = "macdown-cmd"
             ReferencedContainer = "container:MacDown.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,9 +56,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1FA6DE201941CC9E000409FB"
-            BuildableName = "MacDown.app"
-            BlueprintName = "MacDown"
+            BlueprintIdentifier = "905EF1A6196164CA00FC3CE9"
+            BuildableName = "macdown"
+            BlueprintName = "macdown-cmd"
             ReferencedContainer = "container:MacDown.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,9 +75,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1FA6DE201941CC9E000409FB"
-            BuildableName = "MacDown.app"
-            BlueprintName = "MacDown"
+            BlueprintIdentifier = "905EF1A6196164CA00FC3CE9"
+            BuildableName = "macdown"
+            BlueprintName = "macdown-cmd"
             ReferencedContainer = "container:MacDown.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -98,14 +88,5 @@
    <ArchiveAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
-      <PostActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "echo &quot;ARCHIVE_PATH: $ARCHIVE_PATH&quot;">
-            </ActionContent>
-         </ExecutionAction>
-      </PostActions>
    </ArchiveAction>
 </Scheme>
