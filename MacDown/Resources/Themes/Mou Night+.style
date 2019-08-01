@@ -79,3 +79,6 @@ foreground: 93a1a1
 
 BLOCKQUOTE
 foreground: ff0000
+
+STRIKE
+strike-color: cc99cc
