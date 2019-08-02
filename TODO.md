@@ -17,3 +17,10 @@ PAPreferences maps `dynamic` properties onto NSUserDefaults getters and setters 
 ## [MASPreferences](https://github.com/shpakovski/MASPreferences)
 
 Modern implementation of the Preferences window for OS X apps, used in TextMate, GitBox and Mou:[http://blog.shpakovski.com/2011/04/pr…](http://blog.shpakovski.com/2011/04/preferences-windows-in-cocoa.html)
+
+
+
+## [Sparkle](https://github.com/sparkle-project/Sparkle)
+
+A software update framework for macOS
+

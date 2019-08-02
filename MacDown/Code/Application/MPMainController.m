@@ -51,7 +51,7 @@ NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
      }];
 }
 
-/** 恶搞... */
+/** ✅ 恶搞... */
 NS_INLINE void treat()
 {
     NSDictionary *info = MPGetDataMap(@"treats");
@@ -259,7 +259,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - NSApplicationDelegate
-/** NSApplicationDelegate: Invoked immediately before opening an untitled file. */
+/** ✅ NSApplicationDelegate: Invoked immediately before opening an untitled file. */
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
 {
     if (self.preferences.filesToOpen.count || self.preferences.pipedContentFileToOpen)
@@ -267,6 +267,7 @@ NS_INLINE void treat()
     return !self.preferences.supressesUntitledDocumentOnLaunch;
 }
 
+// ✅ NSApplicationDelegate: Sent by the default notification center immediately after the application becomes active.
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     [self openPendingPipedContent];
@@ -324,6 +325,7 @@ NS_INLINE void treat()
     }
 }
 
+/// ✅ 打开所有 filesToOpen 中的文档
 - (void)openPendingFiles
 {
     NSDocumentController *c = [NSDocumentController sharedDocumentController];
@@ -346,6 +348,7 @@ NS_INLINE void treat()
     [self.preferences synchronize];
 }
 
+/// ✅ 如果 pipedContentFileToOpen 存在，则新建空白文档并使用它打开 pipedContentFileToOpen 路径中的内容
 - (void)openPendingPipedContent {
     NSDocumentController *c = [NSDocumentController sharedDocumentController];
 
