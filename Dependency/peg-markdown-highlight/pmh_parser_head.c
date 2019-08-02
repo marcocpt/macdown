@@ -1,4 +1,14 @@
 /* PEG Markdown Highlight
+ * Copyright 2011-2016 Ali Rantakari -- http://hasseg.org
+ * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
+ * 
+ * pmh_grammar.leg
+ * 
+ * This is a slightly adapted version of the PEG grammar from John MacFarlane's
+ * peg-markdown compiler.
+ */
+
+/* PEG Markdown Highlight
  * Copyright 2011-2013 Ali Rantakari -- http://hasseg.org
  * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
  * 
@@ -74,41 +84,55 @@ typedef struct pmh_RealElement pmh_realelement;
 
 
 
-// Parser state data:
+/// Parser state data:
 typedef struct
 {
-    /* The original, unmodified UTF-8 input: */
+    /** The original, unmodified UTF-8 input: */
     char *original_input;
     
-    /* The offsets of the bytes we have stripped from original_input: */
+    /** The offsets of the bytes we have stripped from original_input: */
     unsigned long *strip_positions;
     size_t strip_positions_len;
     
-    /* Buffer of characters to be parsed: */
+    /** Buffer of characters to be parsed: */
     char *charbuf;
     
-    /* Linked list of {start, end} offset pairs determining which parts */
-    /* of charbuf to actually parse: */
+    /** Linked list of {start, end} offset pairs determining which parts
+     of charbuf to actually parse: */
     pmh_realelement *current_elem;
     pmh_realelement *elem_head;
     
     /* Current parsing offset within charbuf: */
     unsigned long offset;
     
-    /* The extensions to use for parsing (bitfield */
-    /* of enum pmh_extensions): */
+    /** The extensions to use for parsing (bitfield of enum pmh_extensions): */
     int extensions;
     
-    /* Array of parsing result elements, indexed by type: */
+    /** Array of parsing result elements, indexed by type: */
     pmh_realelement **head_elems;
     
-    /* Whether we are parsing only references: */
+    /** Whether we are parsing only references: */
     bool parsing_only_references;
     
-    /* List of reference elements: */
+    /** List of reference elements: */
     pmh_realelement *references;
 } parser_data;
 
+
+/**
+ ✅ 使用 pmh_realelement 来生成 parser_data。
+ @discussion 如果 head_elems 为空，则按 pmh_NUM_TYPES 分配内存
+ @param original_input The original, unmodified UTF-8 input
+ @param strip_positions The offsets of the bytes we have stripped from original_input
+ @param strip_positions_len strip positions len
+ @param charbuf Buffer of characters to be parsed
+ @param parsing_elems 需要解析的元素，用来生成 Linked list of {start, end} offset pairs
+ @param offset Current parsing offset within charbuf
+ @param extensions The extensions to use for parsing (bitfield of enum pmh_extensions)
+ @param head_elems Array of parsing result elements, indexed by type
+ @param references List of reference elements
+ @return parser_data
+ */
 static parser_data *mk_parser_data(char *original_input,
                                    unsigned long *strip_positions,
                                    size_t strip_positions_len,
@@ -428,12 +452,13 @@ void pmh_free_elements(pmh_element **elems)
     strip_positions[strip_positions_pos] = x; \
     strip_positions_pos++;
 
-/*
-Copy `str` to `out`, while doing the following:
-  - remove UTF-8 continuation bytes
-  - remove possible UTF-8 BOM (byte order mark)
-  - append two newlines to the end (like peg-markdown does)
-  - keep track of which bytes we have stripped (in strip_positions)
+/**
+ ✅
+ @discussion Copy `str` to `out`, while doing the following:
+ @discussion - remove UTF-8 continuation bytes
+ @discussion - remove possible UTF-8 BOM (byte order mark)
+ @discussion - append two newlines to the end (like peg-markdown does)
+ @discussion - keep track of which bytes we have stripped (in strip_positions)
 */
 static int strcpy_preformat(char *str, char **out,
                             unsigned long **out_strip_positions,
@@ -451,19 +476,21 @@ static int strcpy_preformat(char *str, char **out,
     char *c = str;
     int i = 0;
     
+    // 移除UTF8格式的BOM
     if (HAS_UTF8_BOM(c)) {
         c += 3;
         ADD_STRIP_POS(0);
         ADD_STRIP_POS(1);
         ADD_STRIP_POS(2);
     }
-    
+    // 判断为字符串结尾
     while (*c != '\0')
     {
+        // https://stackoverflow.com/questions/9356169/utf-8-continuation-bytes
         if (!IS_CONTINUATION_BYTE(*c)) {
             *(new_str+i) = *c, i++;
         } else {
-            ADD_STRIP_POS((int)(c-str));
+            ADD_STRIP_POS((int)(c-str));  // 同类型指针相减代表两元素间个数差想，相当于确定此时字符的位置
         }
         c++;
     }
@@ -480,6 +507,10 @@ static int strcpy_preformat(char *str, char **out,
 
 
 
+/**
+ ✅ 执行 strcpy_preformat 将文本进行格式化，记录 strip 信息，然后转换数据为 p_data，使用这
+ 个数据进行解析
+ */
 void pmh_markdown_to_elements(char *text, int extensions,
                               pmh_element **out_result[])
 {

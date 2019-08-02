@@ -67,6 +67,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return self;
 }
 
+// ✅
 - (instancetype) initWithTextView:(NSTextView *)textView
 {
 	if (!(self = [self init]))
@@ -75,6 +76,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return self;
 }
 
+// ✅
 - (instancetype) initWithTextView:(NSTextView *)textView
 		   waitInterval:(NSTimeInterval)interval
 {
@@ -84,6 +86,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return self;
 }
 
+// ✅
 - (instancetype) initWithTextView:(NSTextView *)textView
 		   waitInterval:(NSTimeInterval)interval
 				 styles:(NSArray *)inStyles
@@ -98,7 +101,9 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 
 #pragma mark -
 
-
+/**
+ ✅ 利用 _currentHighlightText 来解析 markdown 的元素，并按位置排序
+*/
 - (pmh_element **) parseText:(NSString *)markdown
 {
 	pmh_element **result = NULL;
@@ -110,11 +115,13 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return result;
 }
 
-
-// Convert unicode code point offsets (this is what we get from the parser) to
-// NSString character offsets (NSString uses UTF-16 units as characters, so
-// sometimes two characters (a "surrogate pair") are needed to represent one
-// code point):
+/**
+ ✅ Convert unicode code point offsets (this is what we get from the parser) to
+ NSString character offsets (NSString uses UTF-16 units as characters, so
+ sometimes two characters (a "surrogate pair") are needed to represent one
+ code point):
+ @note surrogate pair: 参考 https://objccn.io/issue-9-1/
+ */
 - (void) convertOffsets:(pmh_element **)elements text:(NSString *)markdown
 {
     // Walk through the whole string only once, and gather all surrogate pair indexes
@@ -168,6 +175,11 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
     }
 }
 
+/**
+ ✅ 开一个线程处理解析和高亮，线程执行方法：threadParseAndHighlight, 注册通知
+  NSThreadWillExitNotification 执行 threadDidExit: 。启动线程前会将 targetTextViewd
+  的 string 复制给 _currentHighlightText 。
+ */
 - (void) requestParsing
 {
 	[_parseHighlightsQueue cancelAllOperations];
@@ -192,7 +204,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 #pragma mark -
 
 
-
+/** ✅ 在当前的字体特征掩码中添加 斜体、非斜体；粗体、非粗体；压缩、伸展 的反向字体掩码 */
 - (NSFontTraitMask) getClearFontTraitMask:(NSFontTraitMask)currentFontTraitMask
 {
 	static NSDictionary *oppositeFontTraits = nil;	
@@ -213,6 +225,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return traitsToApply;
 }
 
+/** ✅ 清除范围内的文字属性 */
 - (void) clearHighlightingForRange:(NSRange)range
 {
 	NSTextStorage *textStorage = [_targetTextView textStorage];
@@ -250,6 +263,10 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
      }];
 }
 
+/**
+ ✅从当前的 TextView 中读取字体、颜色等属性，保存到 _clearFontTraitMask、
+ self.defaultTextColor 和 self.defaultTypingAttributes 中
+ */
 - (void) readClearTextStylesFromTextView
 {
 	_clearFontTraitMask = [self getClearFontTraitMask:
@@ -270,7 +287,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 		typingAttrs[NSParagraphStyleAttributeName] = [self.targetTextView defaultParagraphStyle];
 	self.defaultTypingAttributes = typingAttrs;
 }
-
+/** ✅ 在指定范围应用高亮 */
 - (void) applyHighlighting:(pmh_element **)elements withRange:(NSRange)range
 {
 	NSUInteger rangeEnd = NSMaxRange(range);
@@ -362,6 +379,11 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[[self.targetTextView textStorage] endEditing];
 }
 
+/**
+ ✅ 只高亮处理可见的范围
+ 
+ 使用 NSClipView.documentVisibleRect 属性获取可见的区域
+ */
 - (void) applyVisibleRangeHighlighting
 {
 	NSRect visibleRect = [[[self.targetTextView enclosingScrollView] contentView] documentVisibleRect];
@@ -403,6 +425,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[self cacheElementList:NULL];
 }
 
+/** ✅ 编辑文本时执行。使用 GCD 定时器延时绚烂 */
 - (void)textViewTextDidChange:(NSNotification *)notification
 {
 	if (!self.waitInterval) {
@@ -433,7 +456,9 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	}];
 }
 
-
+/**
+ ✅ 获得默认的 style 定义
+ */
 - (NSArray *) getDefaultStyles
 {
 	static NSArray *defaultStyles = nil;
@@ -466,6 +491,10 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	return defaultStyles;
 }
 
+/**
+ ✅ Set NSTextView link styles to match the styles set for
+ LINK elements, with the "pointing hand cursor" style added
+ */
 - (void) applyStyleDependenciesToTargetTextView
 {
 	if (self.targetTextView == nil)
@@ -485,6 +514,10 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	_styleDependenciesPending = NO;
 }
 
+/**
+ ✅ 设置新的 style 定义, 如果为空，就设为默认的 style。然后如果
+ self.targetTextView != nil，则执行 applyStyleDependenciesToTargetTextView
+ */
 - (void) setStyles:(NSArray *)newStyles
 {
 	NSArray *stylesToApply = (newStyles != nil) ? newStyles : [self getDefaultStyles];
@@ -496,7 +529,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	else
 		_styleDependenciesPending = YES;
 }
-
+/** ✅ */
 - (NSDictionary *) getDefaultSelectedTextAttributes
 {
 	static NSDictionary *cachedValue = nil;
@@ -630,7 +663,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[self highlightNow];
 }
 
-
+/** ✅ 设置 _targetTextView 并调用 readClearTextStylesFromTextView */
 - (void) setTargetTextView:(NSTextView *)newTextView
 {
 	if (_targetTextView == newTextView)
@@ -648,17 +681,22 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[self requestParsing];
 }
 
+/**
+ ✅ 调用 applyVisibleRangeHighlighting
+ */
 - (void) highlightNow
 {
 	[self applyVisibleRangeHighlighting];
 }
-
+// ✅
 - (void) activate
 {
 	// todo: throw exception if targetTextView is nil?
 	
 	if (self.styles == nil)
 		self.styles = [self getDefaultStyles];
+  // 设定 style 时未指定 targetTextView 会设置 _styleDependenciesPending 为true。
+  // (在 `- (void) setStyles:(NSArray *)newStyles` 中）
 	if (_styleDependenciesPending)
 		[self applyStyleDependenciesToTargetTextView];
 	
