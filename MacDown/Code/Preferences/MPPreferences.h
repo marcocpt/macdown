@@ -84,7 +84,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 - (instancetype)init;
 
 // Convinience methods.
-@property (nonatomic, assign) NSArray *filesToOpen;
+@property (nonatomic, assign) NSArray *filesToOpen;             /**< 下次启动时要打开的文件 */
 @property (nonatomic, assign) NSString *pipedContentFileToOpen; /**< TODO: */
 
 @end
