@@ -24,7 +24,7 @@
 
 static NSString * const kMPTreatLastSeenStampKey = @"treatLastSeenStamp";
 
-/** 将 Bundle 中的指定文件复制到 tmp 目录中，然后使用 NSDocumentController 进行打开*/
+/** ✅ 将 Bundle 中的指定文件复制到 tmp 目录中，然后使用 NSDocumentController 进行打开，并设置边框大小为主屏幕的可见边框 */
 NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
 {
     NSURL *source = [[NSBundle mainBundle] URLForResource:resource
@@ -34,6 +34,7 @@ NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
                                                        filename]];
     BOOL ok = NO;
     NSFileManager *manager = [NSFileManager defaultManager];
+    // 先试着移除文件，避免已经存在，然后再复制过去
     [manager removeItemAtURL:target error:NULL];
     ok = [manager copyItemAtURL:source toURL:target error:NULL];
 
@@ -49,6 +50,7 @@ NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
              [wc.window setFrame:frame display:YES];
      }];
 }
+
 /** 恶搞... */
 NS_INLINE void treat()
 {
@@ -99,10 +101,11 @@ NS_INLINE void treat()
 @implementation MPMainController
 
 @synthesize preferencesWindowController = _preferencesWindowController;
-/** 执行 `WebCache.disabled = YES`(private API), Registers the Apple event */
+/** ✅ 执行 `WebCache.disabled = YES`(private API), Registers the Apple event */
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     // Using private API [WebCache setDisabled:YES] to disable WebView's cache
+    // FIXME: https://stackoverflow.com/questions/16525065/disable-uiwebview-diskimagecache
     id webCacheClass = (id)NSClassFromString(@"WebCache");
     if (webCacheClass) {
 // Ignoring "undeclared selector" warning
@@ -117,13 +120,16 @@ NS_INLINE void treat()
         [invocation invoke];
 #pragma clang diagnostic pop
     }
+    // TODO: With enabled sandboxing, the handler method doesn't get called when the app is launched by clicking a URL that uses the custom scheme. By installing the handler a bit earlier, in applicationWillFinishLaunching:, the method gets called as expected
+    // 参考：https://stackoverflow.com/questions/1991072/how-to-handle-with-a-default-url-scheme/1991164#1991164
     [[NSAppleEventManager sharedAppleEventManager]
         setEventHandler:self
             andSelector:@selector(openUrlSchemeAppleEvent:withReplyEvent:)
-          forEventClass:kInternetEventClass andEventID:kAEGetURL];
+          forEventClass:kInternetEventClass andEventID:kAEFetchURL];
 }
 
-/** Open a file from a browser with url of the form :
+#pragma mark - Selector
+/** ✅ Open a file from a browser with url of the form :
  "x-macdown://open?url=file:///path/to/a/file&line=123&column=45" */
 - (void)openUrlSchemeAppleEvent:(NSAppleEventDescriptor *)event
                  withReplyEvent:(NSAppleEventDescriptor *)reply
@@ -136,6 +142,7 @@ NS_INLINE void treat()
     if (!url) {
         return;
     }
+    // resolvingAgainstBaseURL 参数参考：https://stackoverflow.com/questions/38720933/whats-the-difference-between-passing-false-and-true-to-resolvingagainstbaseurl
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:url
                                                 resolvingAgainstBaseURL:NO];
     if (!urlComponents) {
@@ -177,18 +184,22 @@ NS_INLINE void treat()
 
 }
 
+#pragma mark - Private
+/// ✅ 在 queryItems （NSArray<NSURLQueryItem *>） 中查找满足 key 的 queryItem.value
 - (NSString *)valueForKey:(NSString *)key fromQueryItems:(NSArray *)queryItems
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name=%@", key];
     NSURLQueryItem *queryItem = [[queryItems filteredArrayUsingPredicate:predicate] firstObject];
     return queryItem.value;
 }
-/** 获取 MPPreferences 的单例，首次执行会初始化 */
+
+/// ✅ 获取 MPPreferences 的单例，首次执行会初始化
 - (MPPreferences *)preferences
 {
     return [MPPreferences sharedInstance];
 }
-/** 初始化配置窗口控制器，添加各个面板的控制器 */
+
+/// ✅ 初始化配置窗口控制器，添加各个面板的控制器 */
 - (NSWindowController *)preferencesWindowController
 {
     if (!_preferencesWindowController)
@@ -209,17 +220,21 @@ NS_INLINE void treat()
     }
     return _preferencesWindowController;
 }
-/** 显示配置窗口 */
+
+#pragma mark - Action
+/// ✅ 显示配置窗口 */
 - (IBAction)showPreferencesWindow:(id)sender
 {
     [self.preferencesWindowController showWindow:nil];
 }
 
+/// ✅ 打开帮助文件
 - (IBAction)showHelp:(id)sender
 {
     MPOpenBundledFile(@"help", @"md");
 }
 
+/// ✅ 打开捐助文件
 - (IBAction)showContributing:(id)sender
 {
     MPOpenBundledFile(@"contribute", @"md");
@@ -227,7 +242,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - Override
-/** 增加配置改变的通知，并复制配置文件到 App root 目录 */
+/** ✅ 增加第一次安装的通知，并复制相关配置文件到 App root 目录 */
 - (instancetype)init
 {
     self = [super init];
@@ -353,7 +368,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - Notification handler
-
+/// MPDidDetectFreshInstallationNotification 通知处理的方法。在第一次安装时显示帮助文件
 - (void)showFirstLaunchTips
 {
     [self showHelp:nil];

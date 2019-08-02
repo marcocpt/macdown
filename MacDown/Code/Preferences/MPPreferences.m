@@ -19,10 +19,10 @@ typedef NS_ENUM(NSUInteger, MPUnorderedListMarkerType)
 };
 
 
-
+/// 首次安装的通知，收到通知执行 MPMainController 中的 showFirstLaunchTips 方法
 NSString * const MPDidDetectFreshInstallationNotification =
     @"MPDidDetectFreshInstallationNotificationName";
-
+/// 存储默认配置，在 loadDefaultPreferences 方法中使用
 static NSString * const kMPDefaultEditorFontNameKey = @"name";
 static NSString * const kMPDefaultEditorFontPointSizeKey = @"size";
 static NSString * const kMPDefaultEditorFontName = @"Menlo-Regular";
@@ -36,7 +36,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 
 @implementation MPPreferences
-/** 初始化默认配置 */
+/** ✅ 第一次安装时会存储 firstVersionInstalled 并发送 MPDidDetectFreshInstallationNotification 通知，然后初始化默认配置 */
 - (instancetype)init
 {
     self = [super init];

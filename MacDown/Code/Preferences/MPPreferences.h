@@ -14,8 +14,8 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 
 @interface MPPreferences : PAPreferences
 
-@property (assign) NSString *firstVersionInstalled;         /**< 已经安装的第一版 */
-@property (assign) NSString *latestVersionInstalled;        /**< 已经安装的最新版 */
+@property (assign) NSString *firstVersionInstalled;         /**< 第一次安装时存储版本号(CFBundleVersion) */
+@property (assign) NSString *latestVersionInstalled;        /**< 已经安装的最新版号 */
 @property (assign) BOOL updateIncludesPreReleases;          /**< 包含预览版的更新提示。General 设置中：“Include pre-releases” */
 @property (assign) BOOL supressesUntitledDocumentOnLaunch;  /**< 抑制启动时打开空白文档。General 设置中：“Ensure open document on launch” 取反*/
 @property (assign) BOOL createFileForLinkTarget;            /**< TODO: 自动为链接目标创建文件。General 设置中：“Automatically create files for link targets” */
