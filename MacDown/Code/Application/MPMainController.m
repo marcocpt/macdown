@@ -101,7 +101,7 @@ NS_INLINE void treat()
 @implementation MPMainController
 
 @synthesize preferencesWindowController = _preferencesWindowController;
-/** ✅ 执行 `WebCache.disabled = YES`(private API), Registers the Apple event */
+/** ✅ 执行 `WebCache.disabled = YES`(private API), Registers the Apple event(open url) */
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
     // Using private API [WebCache setDisabled:YES] to disable WebView's cache
@@ -287,7 +287,7 @@ NS_INLINE void treat()
 
 
 #pragma mark - Private
-/** 复制类型和主题文件到 App root 目录，不存在才复制*/
+/** ✅ 复制类型和主题文件到 App root 目录，不存在才复制*/
 - (void)copyFiles
 {
     NSFileManager *manager = [NSFileManager defaultManager];

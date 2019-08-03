@@ -24,3 +24,10 @@ Modern implementation of the Preferences window for OS X apps, used in TextMate,
 
 A software update framework for macOS
 
+## [Hoedown](https://github.com/hoedown/hoedown) 
+
+for Markdown-to-HTML rendering
+
+## [Prism](http://prismjs.com/) 
+
+for syntax highlighting (in code blocks)

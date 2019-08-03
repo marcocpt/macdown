@@ -31,14 +31,14 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 
 @synthesize contentRect = _contentRect;
 @synthesize scrollsPastEnd = _scrollsPastEnd;
-
+// ✅ 
 - (BOOL)scrollsPastEnd
 {
     @synchronized(self) {
         return _scrollsPastEnd;
     }
 }
-/** override: 编辑器视图注册剪切板拖动 */
+/** ✅ override: 编辑器视图注册剪切板拖动 */
 - (void)awakeFromNib {
     [self registerForDraggedTypes:[NSArray arrayWithObjects: NSDragPboard, nil]];
     [super awakeFromNib];
@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         _contentRect = rect;
     }
 }
-/** ovarride: 如果滚动可超过文档底部，则高度尺寸增加*/
+/** ✅ ovarride: 如果滚动可超过文档底部，则高度尺寸增加*/
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)

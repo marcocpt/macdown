@@ -197,7 +197,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 
 #pragma mark - Private
-/** 从 NSUserDefaults.standard.dictionaryRepresentation() 中获取 @"NSSplitView Subview Frames"、 @"NSWindow Frame"，如果是 url 类型就移除。此为老版本软件使用过。 */
+/** ✅ 从 NSUserDefaults.standard.dictionaryRepresentation() 中获取 @"NSSplitView Subview Frames"、 @"NSWindow Frame"，如果是 url 类型就移除。此为老版本软件使用过。 */
 - (void)cleanupObsoleteAutosaveValues
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -223,7 +223,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
         [defaults removeObjectForKey:key];
 }
 
-/** Load app-default preferences on first launch.
+/** ✅ Load app-default preferences on first launch.
  *
  * Preferences that need to be initialized manually are put here, and will be
  * applied when the user launches MacDown the first time.

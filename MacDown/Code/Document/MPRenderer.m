@@ -213,7 +213,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 @property (readonly) NSArray *stylesheets;
 @property (readonly) NSArray *scripts;
 @property (copy) NSString *currentHtml;                 /**< parseMarkdown: 函数中解析 markdown 后生成的 html 字符串 */
-@property (strong) NSOperationQueue *parseQueue;
+@property (strong) NSOperationQueue *parseQueue;        /**< 解析队列 */
 @property int extensions;
 @property BOOL smartypants;
 @property BOOL TOC;
@@ -340,7 +340,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 
 
 @implementation MPRenderer
-/** init */
+// ✅ override: 初始化部分属性
 - (instancetype)init
 {
     self = [super init];
@@ -582,7 +582,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         [self parseMarkdown:[self.dataSource rendererMarkdown:self]];
     }
 }
-/** 解析 markdown 文本，同时z处理 frontmatter， TOC，将解析得到的 html 赋给 self.currentHtml */
+/** 解析 markdown 文本，同时处理 frontmatter， TOC，将解析得到的 html 赋给 self.currentHtml */
 - (void)parseMarkdown:(NSString *)markdown {
     [self.currentLanguages removeAllObjects];
     

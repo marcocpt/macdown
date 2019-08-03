@@ -10,13 +10,13 @@
 #import "NSString+Lookup.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 
-NSString * const kMPStylesDirectoryName = @"Styles";
-NSString * const kMPStyleFileExtension = @"css";
-NSString * const kMPThemesDirectoryName = @"Themes";
-NSString * const kMPThemeFileExtension = @"style";
-NSString * const kMPPlugInsDirectoryName = @"PlugIns";
-NSString * const kMPPlugInFileExtension = @"plugin";
-/** 获取 App 数据的根目录 “~/Library/Application Support/MacDown” */
+NSString * const kMPStylesDirectoryName = @"Styles";    /**< 样式目录名 */
+NSString * const kMPStyleFileExtension = @"css";        /**< 样式文件扩展名 */
+NSString * const kMPThemesDirectoryName = @"Themes";    /**< 主题目录名 */
+NSString * const kMPThemeFileExtension = @"style";      /**< 主题文件的扩展名 */
+NSString * const kMPPlugInsDirectoryName = @"PlugIns";  /**< 插件目录名 */
+NSString * const kMPPlugInFileExtension = @"plugin";    /**< 插件扩展名 */
+/** ✅ 获取 App 数据的根目录 “~/Library/Application Support/MacDown” */
 static NSString *MPDataRootDirectory()
 {
     static NSString *path = nil;
@@ -46,7 +46,7 @@ NSString *MPPathToDataFile(NSString *name, NSString *dirPath)
     return [NSString pathWithComponents:@[MPDataDirectory(dirPath),
                                           name]];
 }
-/** 获取 dirName 目录中的文件路径，如果 processor 不为空，则使用 processor 处理获得的路径 */
+/** ✅ 获取 dirName 目录中的文件路径，如果 processor 不为空，则使用 processor 处理获得的路径 */
 NSArray *MPListEntriesForDirectory(
     NSString *dirName, NSString *(^processor)(NSString *absolutePath))
 {

@@ -60,7 +60,7 @@ NS_INLINE NSDictionary *MPEditorKeysToObserve()
     });
     return keys;
 }
-/** 定义需要观察的配置的keys */
+/** ✅ 定义需要观察的配置的keys */
 NS_INLINE NSSet *MPEditorPreferencesToObserve()
 {
     static NSSet *keys = nil;
@@ -84,7 +84,7 @@ NS_INLINE NSString *MPRectStringForAutosaveName(NSString *name)
     NSString *rectString = [defaults objectForKey:key];
     return rectString;
 }
-
+/// ✅ 获取 Web 视图的背景色
 NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
 {
     DOMDocument *doc = webview.mainFrameDocument;
@@ -114,7 +114,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
 
 
 @implementation WebView (Shortcut)
-/** Override: The nearest ancestor scroll view that contains the current view. */
+/** ✅ Override: The nearest ancestor scroll view that contains the current view. */
 - (NSScrollView *)enclosingScrollView
 {
     return self.mainFrame.frameView.documentView.enclosingScrollView;
@@ -185,7 +185,7 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 };
 
 @property (weak) IBOutlet NSToolbar *toolbar;
-@property (weak) IBOutlet MPDocumentSplitView *splitView;
+@property (weak) IBOutlet MPDocumentSplitView *splitView;           /**< 分栏视图 */
 @property (weak) IBOutlet NSView *editorContainer;
 @property (unsafe_unretained) IBOutlet MPEditorView *editor;        /**< 编辑视图 */
 @property (weak) IBOutlet NSLayoutConstraint *editorPaddingBottom;
@@ -195,14 +195,14 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (copy, nonatomic) NSString *autosaveName;                 /**< 自动保存的默认名字，如果文件已经保存则为文件名 */
 @property (strong) HGMarkdownHighlighter *highlighter;              /**< 编辑视图的渲染器 */
 @property (strong) MPRenderer *renderer;                            /**< 预览视图的渲染器 */
-@property CGFloat previousSplitRatio;
+@property CGFloat previousSplitRatio;                               /**< 先前的分离视图的比例，小于0代表隐藏 */
 @property BOOL manualRender;
 @property BOOL copying;
 @property BOOL printing;
-@property BOOL shouldHandleBoundsChange;
-@property BOOL isPreviewReady;
+@property BOOL shouldHandleBoundsChange;                            /**< 应该处理边界的改变 */
+@property BOOL isPreviewReady;                                      /**< 预览已经就绪 */
 @property (strong) NSURL *currentBaseUrl;
-@property CGFloat lastPreviewScrollTop;
+@property CGFloat lastPreviewScrollTop;                             /**< 预览滚动视图的顶部坐标 */
 @property (nonatomic, readonly) BOOL needsHtml;                     /**< 不是手动渲染，预览视图可见或编辑器显示 wordCountWidget */
 @property (nonatomic) NSUInteger totalWords;
 @property (nonatomic) NSUInteger totalCharacters;
@@ -215,7 +215,7 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (nonatomic) BOOL renderToWebPending;
 @property (strong) NSArray<NSNumber *> *webViewHeaderLocations;
 @property (strong) NSArray<NSNumber *> *editorHeaderLocations;
-@property (nonatomic) BOOL inLiveScroll;
+@property (nonatomic) BOOL inLiveScroll;                           /**< 存在滚动 */
 
 /** Store file content in initializer until nib is loaded. 未保存的内容*/
 @property (copy) NSString *loadedString;
@@ -256,7 +256,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 @implementation MPDocument
 
 #pragma mark - Accessor
-/** 获取单例 */
+/** ✅ 获取单例 */
 - (MPPreferences *)preferences
 {
     return [MPPreferences sharedInstance];
@@ -338,7 +338,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - Override
-/** Override: init */
+/** ✅ Override: init 部分s参数 */
 - (instancetype)init
 {
     self = [super init];
@@ -351,12 +351,12 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     
     return self;
 }
-/** Override: The name of the document’s sole nib file. */
+/** ✅ Override: The name of the document’s sole nib file. */
 - (NSString *)windowNibName
 {
     return @"MPDocument";
 }
-/** Override: Sent after the specified window controller loads a nib file if the receiver is the nib file’s owner. */
+/** ✅  Override: Sent after the specified window controller loads a nib file if the receiver is the nib file’s owner. */
 - (void)windowControllerDidLoadNib:(NSWindowController *)controller
 {
     [super windowControllerDidLoadNib:controller];
@@ -377,13 +377,15 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         rectString = MPRectStringForAutosaveName(kMPDefaultAutosaveName);
     if (rectString)
         [controller.window setFrameFromString:rectString];
-
+    
+    // 设置高亮器和渲染器
     self.highlighter =
         [[HGMarkdownHighlighter alloc] initWithTextView:self.editor
                                            waitInterval:0.0];
     self.renderer = [[MPRenderer alloc] init];
     self.renderer.dataSource = self;
     self.renderer.delegate = self;
+    
     // 添加观察属性，当被观察的属性改变时会调用 observeValueForKeyPath:ofObject:change:context:
     for (NSString *key in MPEditorPreferencesToObserve())
     {
@@ -397,11 +399,13 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     }
     // posts a NSViewFrameDidChangeNotification
     self.editor.postsFrameChangedNotifications = YES;
+    // 设置预览视图的代理
     self.preview.frameLoadDelegate = self;
     self.preview.policyDelegate = self;
     self.preview.editingDelegate = self;
     self.preview.resourceLoadDelegate = self;
 
+    // 增加观察通知
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(editorTextDidChange:)
                    name:NSTextDidChangeNotification object:self.editor];
@@ -420,6 +424,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     [center addObserver:self selector:@selector(willStartLiveScroll:)
                    name:NSScrollViewWillStartLiveScrollNotification
                  object:self.editor.enclosingScrollView];
+    // 拖动编辑器的滚动条执行
     [center addObserver:self selector:@selector(didEndLiveScroll:)
                    name:NSScrollViewDidEndLiveScrollNotification
                  object:self.editor.enclosingScrollView];
@@ -459,17 +464,6 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self reloadFromLoadedString];
     }];
 }
-/** 从 loadedString 属性中加载字符串给编辑器，并执行渲染和高亮 */
-- (void)reloadFromLoadedString
-{
-    if (self.loadedString && self.editor && self.renderer && self.highlighter)
-    {
-        self.editor.string = self.loadedString;
-        self.loadedString = nil;
-        [self.renderer parseAndRenderNow];
-        [self.highlighter parseAndHighlightNow];
-    }
-}
 
 - (void)close
 {
@@ -499,7 +493,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
     [super close];
 }
-/** override: Returns whether the receiver supports autosaving in place. */
+/** ✅ override: Returns whether the receiver supports autosaving in place. */
 + (BOOL)autosavesInPlace
 {
     return YES;
@@ -509,7 +503,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return @[@"net.daringfireball.markdown"];
 }
-/** override: A Boolean value indicating whether the document has changes that have not been saved.
+/** ✅ override: A Boolean value indicating whether the document has changes that have not been saved.
  当前文档没有存储路径且编辑器字符串长度为0则返回 NO
  */
 - (BOOL)isDocumentEdited
@@ -544,7 +538,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     return [self.editor.string dataUsingEncoding:NSUTF8StringEncoding];
 }
-/** override: 读取上次退出未保存的文本加载到编辑器 */
+/** ✅ override: 读取上次退出未保存的文本加载到编辑器 */
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName
                error:(NSError **)outError
 {
@@ -692,7 +686,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - NSSplitViewDelegate
-/** NSSplitViewDelegate: Invoked by the default notification center to notify the delegate that the splitview did resize its subviews. */
+/** ✅ NSSplitViewDelegate: Invoked by the default notification center to notify the delegate that the splitview did resize its subviews. 分离视图修改尺寸后重绘分隔栏并根据编辑器可见性设置编辑器是否可编辑 */
 - (void)splitViewDidResizeSubviews:(NSNotification *)notification
 {
     [self redrawDivider];
@@ -1160,6 +1154,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     _inLiveScroll = YES;
 }
 
+/// NSScrollViewDidEndLiveScrollNotification 通知执行的方法。拖动编辑器的滚动条执行
 -(void)didEndLiveScroll:(NSNotification *)notification
 {
     _inLiveScroll = NO;
@@ -1195,7 +1190,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 {
     [self render:nil];
 }
-
+/// ✅ NSScrollViewDidEndLiveScrollNotification 通知执行的方法。拖动预览视图滚动条（或触摸板手势）完成滚动时，保存y坐标到 lastPreviewScrollTop
 - (void)previewDidLiveScroll:(NSNotification *)notification
 {
     NSClipView *contentView = self.preview.enclosingScrollView.contentView;
@@ -1494,6 +1489,18 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 #pragma mark - Private
 
+/** ✅ 如果条件都准备好，则从 loadedString 属性中加载字符串给编辑器(加载完清空)，并执行渲染和高亮 */
+- (void)reloadFromLoadedString
+{
+    if (self.loadedString && self.editor && self.renderer && self.highlighter)
+    {
+        self.editor.string = self.loadedString;
+        self.loadedString = nil;
+        [self.renderer parseAndRenderNow];
+        [self.highlighter parseAndHighlightNow];
+    }
+}
+
 - (void)toggleSplitterCollapsingEditorPane:(BOOL)forEditorPane
 {
     BOOL isVisible = forEditorPane ? self.editorVisible : self.previewVisible;
@@ -1664,7 +1671,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     }
     self.editor.textContainerInset = NSMakeSize(x, y);
 }
-/** 根据编辑视图和预览视图的状态来设置分隔栏的颜色 */
+/** ✅ 根据编辑视图和预览视图的状态来设置分隔栏的颜色 */
 - (void)redrawDivider
 {
     if (!self.editorVisible)

@@ -30,15 +30,15 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 @interface HGMarkdownHighlighter ()
 {
 	NSFontTraitMask _clearFontTraitMask;
-	pmh_element **_cachedElements;
-	NSOperationQueue *_parseHighlightsQueue;
+	pmh_element **_cachedElements;              /**< 已经缓存的 pmh_element 数组 */
+	NSOperationQueue *_parseHighlightsQueue;    /**< 解析高亮队列 */
 	BOOL _styleDependenciesPending;
-	NSMutableArray *_styleParsingErrors;
+	NSMutableArray *_styleParsingErrors;        /**< 所有的样式解析错误 */
 	CGFloat _defaultTextSize;
 }
 
-@property(copy) NSColor *defaultTextColor;
-@property(strong) NSDictionary *defaultTypingAttributes;
+@property(copy) NSColor *defaultTextColor;                  /**< 默认的文本颜色 */
+@property(strong) NSDictionary *defaultTypingAttributes;    /**< 默认的文本输入属性 */
 
 - (NSFontTraitMask) getClearFontTraitMask:(NSFontTraitMask)currentFontTraitMask;
 
@@ -46,7 +46,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 
 
 @implementation HGMarkdownHighlighter
-
+// ✅ override: 初始化私有属性
 - (id) init
 {
 	if (!(self = [super init]))
@@ -264,7 +264,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 }
 
 /**
- ✅从当前的 TextView 中读取字体、颜色等属性，保存到 _clearFontTraitMask、
+ ✅ 从当前的 TextView 中读取字体、颜色等属性，保存到 _clearFontTraitMask、
  self.defaultTextColor 和 self.defaultTypingAttributes 中
  */
 - (void) readClearTextStylesFromTextView
@@ -663,7 +663,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[self highlightNow];
 }
 
-/** ✅ 设置 _targetTextView 并调用 readClearTextStylesFromTextView */
+/** ✅ 设置 _targetTextView 并读取“clear"的文本样式 */
 - (void) setTargetTextView:(NSTextView *)newTextView
 {
 	if (_targetTextView == newTextView)

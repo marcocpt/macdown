@@ -13,13 +13,13 @@
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 
 
-static CGFloat itemWidth = 37;
+static CGFloat itemWidth = 37;          /**< 工具栏物体的宽度 */
 
 
 @implementation MPToolbarController
 {
-    NSArray *toolbarItems;
-    NSArray *toolbarItemIdentifiers;
+    NSArray *toolbarItems;              /**< 存储工具栏的物体 */
+    NSArray *toolbarItemIdentifiers;    /**< 存储工具栏物体的 ID */
     
     /**
      * Map toolbar item identifier to it's NSToolbarItem or NSToolbarItemGroup object
@@ -44,7 +44,7 @@ static CGFloat itemWidth = 37;
 
 
 #pragma mark - Private
-/** 设置工具栏的物体 */
+/** ✅ 设置工具栏的物体 */
 - (void)setupToolbarItems
 {
     // Set up layout drop down alternatives. title will be set in validateUserInterfaceItem:
@@ -93,8 +93,8 @@ static CGFloat itemWidth = 37;
     self->toolbarItemIdentifiers = [self toolbarItemIdentifiersFromItemsArray:self->toolbarItems];
 }
 
-/**
- * Returns an array with all item identifiers for the toolbar items in the passed in _toolbarItemsArray_.
+/** ✅ Returns an array with all item identifiers for the toolbar items in the
+ passed in _toolbarItemsArray_.
  */
 - (NSArray *)toolbarItemIdentifiersFromItemsArray:(NSArray *)toolbarItemsArray {
     NSMutableArray *orderedIdentifiers = [NSMutableArray new];
@@ -123,7 +123,8 @@ static CGFloat itemWidth = 37;
 
 
 #pragma mark - NSToolbarDelegate
-/** NSToolbarDelegate: Sent to discover the default item identifiers for a toolbar */
+/** ✅ NSToolbarDelegate: Sent to discover the default item identifiers for a toolbar.
+ 从 toolbarItemIdentifiersFromItemsArray 中取出工具栏物体 ID（过滤掉部分不显示的）并插入间隔物体 ID */
 - (NSArray<NSString *> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
 {
     // From toolbar item dictionary(setupToolbarItems)
@@ -178,7 +179,7 @@ static CGFloat itemWidth = 37;
 {
     return [self toolbarAllowedItemIdentifiers:toolbar];
 }
-/** NSToolbarDelegate: Sent to request a new toolbar item; returns a toolbar item of the identified kind for the specified toolbar. */
+/** ✅ NSToolbarDelegate: Sent to request a new toolbar item; returns a toolbar item of the identified kind for the specified toolbar. 根据 ID 返回工具栏物体 */
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag
 {
     NSToolbarItem *item;
@@ -196,8 +197,7 @@ static CGFloat itemWidth = 37;
 
 #pragma mark - Toolbar item factory methods
 
-/**
- * Factory method for creating and configuring a NSToolbarItemGroup object.
+/** ✅ Factory method for creating and configuring a NSToolbarItemGroup object.
  */
 - (NSToolbarItemGroup *)toolbarItemGroupWithIdentifier:(NSString *)itemIdentifier separated:(BOOL)separated label:(NSString *)label items:(NSArray <NSToolbarItem *>*)items {
     NSToolbarItemGroup *itemGroup = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
@@ -237,9 +237,7 @@ static CGFloat itemWidth = 37;
     return itemGroup;
 }
 
-/**
- * Factory method for creating and configuring a NSToolbarItem object.
- */
+/// ✅ Factory method for creating and configuring a NSToolbarItem object.
 - (NSToolbarItem *)toolbarItemWithIdentifier:(NSString *)itemIdentifier label:(NSString *)label icon:(NSString *)iconImageName action:(SEL)action {
     NSToolbarItem *toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
     toolbarItem.label = label;
@@ -264,8 +262,7 @@ static CGFloat itemWidth = 37;
     return toolbarItem;
 }
 
-/**
- * Factory method for creating and configuring a NSToolbarItem object with a NSPopupButton holding menu options as passed in the menuItems parameter.
+/** ✅ Factory method for creating and configuring a NSToolbarItem object with a NSPopupButton holding menu options as passed in the menuItems parameter.
  */
 - (NSToolbarItem *)toolbarItemDropDownWithIdentifier:(NSString *)itemIdentifier label:(NSString *)label icon:(NSString *)iconImageName menuItems:(NSArray <NSMenuItem *>*)menuItems {
     NSToolbarItem *toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];

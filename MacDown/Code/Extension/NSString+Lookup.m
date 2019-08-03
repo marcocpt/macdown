@@ -110,7 +110,8 @@
     }
     return nil;
 }
-/** 扩展名等于 extension */
+
+/** ✅ 扩展名等于 参数 extension */
 - (BOOL)hasExtension:(NSString *)extension
 {
     return [self.pathExtension isEqualToString:extension];

@@ -31,7 +31,7 @@
         return _dividerColor;
     return [super dividerColor];
 }
-/** 设置分割栏的颜色 */
+/** ✅ 设置分割栏的颜色 */
 - (void)setDividerColor:(NSColor *)color
 {
     if ([color isEqualToColor:_dividerColor])

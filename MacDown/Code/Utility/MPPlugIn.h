@@ -11,7 +11,7 @@
 
 @interface MPPlugIn : NSObject
 
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSString *name;     /**< 插件的名称，用于在菜单栏显示 */
 
 - (instancetype)initWithBundle:(NSBundle *)bundle;
 - (BOOL)run:(id)sender;
