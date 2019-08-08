@@ -10,7 +10,7 @@
 
 @interface MPEditorView : NSTextView
 
-@property BOOL scrollsPastEnd;  /**< 滚动可超过文档底部 */
-- (NSRect)contentRect;
+@property BOOL scrollsPastEnd;  /**< ✅ 滚动可超过文档底部。Editor 设置中："Scroll past end"。 */
+- (NSRect)contentRect;          /**< ✅ 如果 _contentRect 等于 NSZeroRect，就返回 self.frame，否则返回 _contentRect */
 
 @end

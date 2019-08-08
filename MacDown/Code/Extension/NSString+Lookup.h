@@ -16,6 +16,7 @@
 
 - (NSArray *)matchesForPattern:(NSString *)pattern;
 
+/** ✅ 找到 Jekyll front-matter，计数出偏移的位置并用 YAMLSerialization 解析 */
 - (id)frontMatter:(NSUInteger *)contentOffset;
 - (NSString *)titleString;
 

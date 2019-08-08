@@ -19,7 +19,7 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
  */
 @interface HGMarkdownHighlighter : NSObject
 
-/** \brief The order and styles for higlighting different elements.
+/** \brief ✅ The order and styles for higlighting different elements.
  * 
  * Values must be instances of HGMarkdownHighlightingStyle. The
  * order of objects in this array determines the highlighting order
@@ -27,7 +27,8 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
  * HGMarkdownHighlightingStyle.h to create the array (see the
  * implementation of the private -getDefaultStyles method in this
  * class for an example).
- * 
+ *
+ * Note: 设置新的 style 定义, 如果为空，就设为默认的 style提，并为 targetTextView 的链接元素添加手势
  * \sa HGMarkdownHighlightingStyle
  * \sa element_type
  */
@@ -48,7 +49,7 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
 /** \brief The NSTextView to highlight. */
 @property(nonatomic, strong) NSTextView *targetTextView;
 
-/** \brief Whether to parse and highlight after each change.
+/** \brief ✅ Whether to parse and highlight after each change.
  * 
  * Whether this highlighter will automatically parse and
  * highlight the text whenever it changes, after a certain delay
@@ -93,14 +94,14 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
 @property int extensions;
 
 
-/** \brief Init new instance while setting targetTextView. */
+/** \brief ✅ Init new instance while setting targetTextView. */
 - (instancetype) initWithTextView:(NSTextView *)textView;
-/** \brief Init new instance while setting targetTextView and waitInterval. */
+/** \brief ✅ Init new instance while setting targetTextView and waitInterval. */
 - (instancetype) initWithTextView:(NSTextView *)textView waitInterval:(NSTimeInterval)interval;
-/** \brief Init new instance while setting targetTextView, waitInterval and styles. */
+/** \brief ✅ Init new instance while setting targetTextView, waitInterval and styles. */
 - (instancetype) initWithTextView:(NSTextView *)textView waitInterval:(NSTimeInterval)interval styles:(NSArray *)inStyles;
 
-/** \brief Read and store the representation of "clear" text
+/** \brief ✅ Read and store the representation of "clear" text
  *         from the current state of the NSTextView.
  * 
  * Use this method to tell this highlighter what "clear" formatting
@@ -109,10 +110,13 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
  * 
  * Note that if you provide the target NSTextView in the init method
  * call, this method will be called automatically at that time.
+ *
+ * 从当前的 TextView 中读取字体、颜色等属性，保存到 _clearFontTraitMask、
+ * self.defaultTextColor 和 self.defaultTypingAttributes 中
  */
 - (void) readClearTextStylesFromTextView;
 
-/** \brief Parse stylesheet and apply the resulting styles.
+/** \brief ✅ Parse stylesheet and apply the resulting styles.
  * 
  * \param[in] stylesheet    The stylesheet string to parse
  * \param[in] errorHandler  A block to be invoked when errors occur in
@@ -126,16 +130,16 @@ typedef void(^HGStyleParsingErrorCallback)(NSArray *errorMessages);
 /** \brief Manually invoke parsing and highlighting of the NSTextView contents. */
 - (void) parseAndHighlightNow;
 
-/** \brief Manually invoke highlighting (without parsing) of the NSTextView contents. */
+/** \brief ✅ Manually invoke highlighting (without parsing) of the NSTextView contents. */
 - (void) highlightNow;
 
-/** \brief Clear highlighting from the NSTextView.
+/** \brief ✅ Clear highlighting from the NSTextView.
  * 
  * This method depends on the values stored by readClearTextStylesFromTextView().
  */
 - (void) clearHighlighting;
 
-/** \brief Begin tracking changes in the NSTextView.
+/** \brief ✅ Begin tracking changes in the NSTextView.
  * 
  * Begin listening for scroll events in the NSTextView's enclosing
  * scroll view and highlighting the visible range upon scrolling.

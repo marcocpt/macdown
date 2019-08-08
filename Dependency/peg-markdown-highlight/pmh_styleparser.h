@@ -108,7 +108,8 @@ typedef struct
 
 
 /**
-* \brief Parse stylesheet string, return style collection
+* \brief ✅ Parse stylesheet string, return style collection.使用输入参数生成 p_data
+* 并给 _sty_parse 函数进行解析，最后返回 p_data->styles
 * 
 * \param[in] input                   The stylesheet string to parse.
 * \param[in] error_callback          Callback function to be called when errors
@@ -133,7 +134,7 @@ pmh_style_collection *pmh_parse_styles(char *input,
                                        void *error_callback_context);
 
 /**
-* \brief Free a pmh_style_collection.
+* \brief ✅ Free a pmh_style_collection.
 * 
 * Frees a pmh_style_collection value returned by pmh_parse_styles().
 * 
@@ -144,5 +145,6 @@ void pmh_free_style_collection(pmh_style_collection *collection);
 
 char *pmh_attr_name_from_type(pmh_attr_type type);
 
+/// ✅ 根据 name 获取属性类型
 pmh_attr_type pmh_attr_type_from_name(char *name);
 

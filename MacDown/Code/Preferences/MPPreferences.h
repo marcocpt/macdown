@@ -33,9 +33,9 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) BOOL extensionHighlight;                 /**< 支持语法高亮。Markdown 设置中：“Highlight” */
 @property (assign) BOOL extensionFootnotes;                 /**< 支持角标标注格式。Markdown 设置中：“Footnote” */
 @property (assign) BOOL extensionQuote;                     /**< 支持引用。Markdown 设置中：“Quote” */
-@property (assign) BOOL extensionSmartyPants;               /**< Converts " or ' to left or right quote。Markdown 设置中：“Smartpants” */
+@property (assign) BOOL extensionSmartyPants;               /**< Markdown 设置中：“Smartpants”. The Smartypants extension automatically transforms straight quotes (`"` and `'`) in your text into typographer’s quotes (`“`, `”`, `‘`, and `’`) according to the context.  */
 
-@property (assign) BOOL markdownManualRender;               /**< 输入文字时自动更新预览。General 设置中：“Update preview automatically as you type” */
+@property (assign) BOOL markdownManualRender;               /**< 输入文字时自动更新预览。General 设置中：“Update preview automatically as you type”.TODO: 命名反了? */
 
 @property (assign) NSDictionary *editorBaseFontInfo;        /**< 存放编辑器的基础字体信息，包括字体名、字体大小 */
 @property (assign) BOOL editorAutoIncrementNumberedLists;   /**< 在有序列表中编号数自动加1。Editor 设置中："Auto-increment numbering in ordered lists" */
@@ -51,7 +51,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) BOOL editorWidthLimited;                 /**< 编辑器中文字的最大宽度限制。Editor 设置中：“Limit editor width to" */
 @property (assign) CGFloat editorMaximumWidth;              /**< 编辑器中文字的最大宽度值。Editor 设置中：“Limit editor ...” 右边的文本框 */
 @property (assign) BOOL editorOnRight;                      /**< 编辑器位于右边。General 设置中：“Put editor on the right” */
-@property (assign) BOOL editorShowWordCount;                /**< 在编辑器中，wordCountWidget 是否显示。General 设置中：“Show word count” */
+@property (assign) BOOL editorShowWordCount;                /**< 在编辑器中，wordCountWidget 是否显示。General 设置中：“Show word count”。*/
 @property (assign) NSInteger editorWordCountType;           /**< wordCountWidget 中的统计菜单的类型 */
 @property (assign) BOOL editorScrollsPastEnd;               /**< 滚动可超过文档底部。Editor 设置中："Scroll past end" */
 @property (assign) BOOL editorEnsuresNewlineAtEndOfFile;    /**< 确保保存文件末尾的换行符。Editor 设置中："Ensure newline at end of file on save" */
@@ -72,19 +72,19 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) BOOL htmlGraphviz;                       /**< 代码块支持Graphviz(Graph Visualization)。Rendering 设置中：“Graphviz”。 @seealso https://github.com/MacDownApp/macdown/pull/625 */
 @property (assign) BOOL htmlMermaid;                        /**< 代码块支持Mermaid(Graph Visualization)。Rendering 设置中：“Mermaid”。 @seealso https://github.com/MacDownApp/macdown/pull/625 */
 @property (assign) NSInteger htmlCodeBlockAccessory;        /**< 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryType 定义。Rendering 设置中：Accessory 选择 */
-@property (assign) NSURL *htmlDefaultDirectoryUrl;
+@property (assign) NSURL *htmlDefaultDirectoryUrl;          /**< 渲染的默认路径。在设置 Rendering 中的 Default path */
 @property (assign) BOOL htmlRendersTOC;                     /**< 监测 TOC 元素。Rendering 设置中：“Detect table of contents token” */
 
 // Calculated values.
-@property (readonly) NSString *editorBaseFontName;
-@property (readonly) CGFloat editorBaseFontSize;
-@property (nonatomic, assign) NSFont *editorBaseFont;
-@property (readonly) NSString *editorUnorderedListMarker;
+@property (readonly) NSString *editorBaseFontName;          /**< ✅ 编辑器基本的字体名字 */
+@property (readonly) CGFloat editorBaseFontSize;            /**< ✅ 编辑器基本的字体尺寸 */
+@property (nonatomic, assign) NSFont *editorBaseFont;       /**< ✅ 编辑器基本的字体 */
+@property (readonly) NSString *editorUnorderedListMarker;   /**< ✅ 编辑器无序列表的标记前缀 */
 
 - (instancetype)init;
 
 // Convinience methods.
-@property (nonatomic, assign) NSArray *filesToOpen;             /**< 下次启动时要打开的文件 */
-@property (nonatomic, assign) NSString *pipedContentFileToOpen; /**< TODO: 与命令行工具通讯的内容 */
+@property (nonatomic, assign) NSArray *filesToOpen;             /**< ✅ 下次启动时要打开的文件 */
+@property (nonatomic, assign) NSString *pipedContentFileToOpen; /**< ✅ TODO: 与命令行工具通讯的内容。获取 kMPApplicationSuiteName 中 kMPPipedContentFileToOpen 的值  */
 
 @end

@@ -24,7 +24,7 @@
 @implementation MPDocumentSplitView
 
 @synthesize dividerColor = _dividerColor;
-/** Override: dividerColor */
+/** ✅ Override: dividerColor */
 - (NSColor *)dividerColor
 {
     if (_dividerColor)
@@ -72,7 +72,7 @@
                              rightWidth, right.frame.size.height);
     [self setPosition:leftWidth ofDividerAtIndex:0];
 }
-
+// ✅
 - (void)swapViews
 {
     NSArray *parts = self.subviews;

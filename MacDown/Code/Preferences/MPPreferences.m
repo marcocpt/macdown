@@ -129,24 +129,24 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
 
 // Private preference.
 @dynamic editorBaseFontInfo;
-/** 获取基本的字体名字 */
+// ✅
 - (NSString *)editorBaseFontName
 {
     return [self.editorBaseFontInfo[kMPDefaultEditorFontNameKey] copy];
 }
-/** 获取基本的字体大小 */
+// ✅
 - (CGFloat)editorBaseFontSize
 {
     NSDictionary *info = self.editorBaseFontInfo;
     return [info[kMPDefaultEditorFontPointSizeKey] doubleValue];
 }
-/** 获取基本的字体 */
+// ✅
 - (NSFont *)editorBaseFont
 {
     return [NSFont fontWithName:self.editorBaseFontName
                            size:self.editorBaseFontSize];
 }
-/** 修改字体 */
+// ✅
 - (void)setEditorBaseFont:(NSFont *)font
 {
     NSDictionary *info = @{
@@ -155,7 +155,7 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
     };
     self.editorBaseFontInfo = info;
 }
-
+// ✅
 - (NSString *)editorUnorderedListMarker
 {
     switch (self.editorUnorderedListMarkerType)
@@ -176,14 +176,14 @@ static NSString * const kMPDefaultHtmlStyleName = @"GitHub2";
     return [self.userDefaults objectForKey:kMPFilesToOpenKey
                               inSuiteNamed:kMPApplicationSuiteName];
 }
-
+/// ✅
 - (void)setFilesToOpen:(NSArray *)filesToOpen
 {
     [self.userDefaults setObject:filesToOpen
                           forKey:kMPFilesToOpenKey
                     inSuiteNamed:kMPApplicationSuiteName];
 }
-/** 获取 kMPApplicationSuiteName 中 kMPPipedContentFileToOpen 的值 */
+/// ✅
 - (NSString *)pipedContentFileToOpen {
     return [self.userDefaults objectForKey:kMPPipedContentFileToOpen
                               inSuiteNamed:kMPApplicationSuiteName];

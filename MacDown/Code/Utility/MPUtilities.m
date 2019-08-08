@@ -46,7 +46,7 @@ NSString *MPPathToDataFile(NSString *name, NSString *dirPath)
     return [NSString pathWithComponents:@[MPDataDirectory(dirPath),
                                           name]];
 }
-/** ✅ 获取 dirName 目录中的文件路径，如果 processor 不为空，则使用 processor 处理获得的路径 */
+// ✅
 NSArray *MPListEntriesForDirectory(
     NSString *dirName, NSString *(^processor)(NSString *absolutePath))
 {
@@ -106,7 +106,7 @@ BOOL MPStringIsNewline(NSString *str)
         return NO;
     return MPCharacterIsNewline([str characterAtIndex:0]);
 }
-/** 指定文件名 name 的 style 文件的路径 */
+// ✅
 NSString *MPStylePathForName(NSString *name)
 {
     if (!name)
@@ -116,7 +116,7 @@ NSString *MPStylePathForName(NSString *name)
     NSString *path = MPPathToDataFile(name, kMPStylesDirectoryName);
     return path;
 }
-/** 指定文件名 name 的主题文件的路径 */
+// ✅
 NSString *MPThemePathForName(NSString *name)
 {
     if (![name hasExtension:kMPThemeFileExtension])
@@ -124,7 +124,7 @@ NSString *MPThemePathForName(NSString *name)
     NSString *path = MPPathToDataFile(name, kMPThemesDirectoryName);
     return path;
 }
-/** 指定文件名 name 的语法高亮主题路径 */
+// ✅
 NSURL *MPHighlightingThemeURLForName(NSString *name)
 {
     name = [NSString stringWithFormat:@"prism-%@", [name lowercaseString]];
@@ -143,7 +143,7 @@ NSURL *MPHighlightingThemeURLForName(NSString *name)
     }
     return url;
 }
-/** 读取指定路径的文件内容，如果出错就返回空串 */
+// ✅
 NSString *MPReadFileOfPath(NSString *path)
 {
     NSError *error = nil;
@@ -154,7 +154,7 @@ NSString *MPReadFileOfPath(NSString *path)
         return @"";
     return s;
 }
-/** 获取包中 .map 格式的解包数据 */
+// ✅
 NSDictionary *MPGetDataMap(NSString *name)
 {
     NSBundle *bundle = [NSBundle mainBundle];

@@ -9,9 +9,9 @@
 #ifndef MacDown_hoedown_html_patch_h
 #define MacDown_hoedown_html_patch_h
 
-static unsigned int HOEDOWN_HTML_USE_TASK_LIST = (1 << 4);
-static unsigned int HOEDOWN_HTML_BLOCKCODE_LINE_NUMBERS = (1 << 5);
-static unsigned int HOEDOWN_HTML_BLOCKCODE_INFORMATION = (1 << 6);
+static unsigned int HOEDOWN_HTML_USE_TASK_LIST = (1 << 4);          /**< HTML 中使用任务列表 */
+static unsigned int HOEDOWN_HTML_BLOCKCODE_LINE_NUMBERS = (1 << 5); /**< HTML 中代码块显示行号 */
+static unsigned int HOEDOWN_HTML_BLOCKCODE_INFORMATION = (1 << 6);  /**< TODO: HTML 中代码块显示信息？ */
 
 typedef struct hoedown_buffer hoedown_buffer;
 

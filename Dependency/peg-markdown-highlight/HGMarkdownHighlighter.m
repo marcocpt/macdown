@@ -29,17 +29,17 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 // 'private members' class extension
 @interface HGMarkdownHighlighter ()
 {
-	NSFontTraitMask _clearFontTraitMask;
-	pmh_element **_cachedElements;              /**< 已经缓存的 pmh_element 数组 */
+    NSFontTraitMask _clearFontTraitMask;        /**< 完整的字体特征码。通过 readClearTextStylesFromTextView 方法获取 */
+	pmh_element **_cachedElements;              /**< 已经缓存的 pmh_element 数组。在 cacheElementList: 方法中设置 */
 	NSOperationQueue *_parseHighlightsQueue;    /**< 解析高亮队列 */
-	BOOL _styleDependenciesPending;
+	BOOL _styleDependenciesPending;             /**< 风格依赖待定(self.targetTextView != nil)时 */
 	NSMutableArray *_styleParsingErrors;        /**< 所有的样式解析错误 */
-	CGFloat _defaultTextSize;
+	CGFloat _defaultTextSize;                   /**< 默认文本尺寸 */
 }
 
 @property(copy) NSColor *defaultTextColor;                  /**< 默认的文本颜色 */
 @property(strong) NSDictionary *defaultTypingAttributes;    /**< 默认的文本输入属性 */
-
+/** ✅ 获取完整的字体特征掩码。不包含某个字体特征掩码就添加它的反向特征掩码 */
 - (NSFontTraitMask) getClearFontTraitMask:(NSFontTraitMask)currentFontTraitMask;
 
 @end
@@ -204,7 +204,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 #pragma mark -
 
 
-/** ✅ 在当前的字体特征掩码中添加 斜体、非斜体；粗体、非粗体；压缩、伸展 的反向字体掩码 */
+// ✅
 - (NSFontTraitMask) getClearFontTraitMask:(NSFontTraitMask)currentFontTraitMask
 {
 	static NSDictionary *oppositeFontTraits = nil;	
@@ -263,10 +263,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
      }];
 }
 
-/**
- ✅ 从当前的 TextView 中读取字体、颜色等属性，保存到 _clearFontTraitMask、
- self.defaultTextColor 和 self.defaultTypingAttributes 中
- */
+// ✅
 - (void) readClearTextStylesFromTextView
 {
 	_clearFontTraitMask = [self getClearFontTraitMask:
@@ -379,10 +376,9 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[[self.targetTextView textStorage] endEditing];
 }
 
-/**
- ✅ 只高亮处理可见的范围
+/** 只高亮处理可见的范围
  
- 使用 NSClipView.documentVisibleRect 属性获取可见的区域
+ 使用 NSClipView.documentVisibleRect 属性获取可见的区域。TODO: 可以使用 self.targetTextView.visibleRect
  */
 - (void) applyVisibleRangeHighlighting
 {
@@ -404,7 +400,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
     if (self.resetTypingAttributes)
         [self.targetTextView setTypingAttributes:self.defaultTypingAttributes];
 }
-
+// ✅
 - (void) clearHighlighting
 {
 	[self clearHighlightingForRange:NSMakeRange(0, [[self.targetTextView textStorage] length])];
@@ -514,10 +510,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	_styleDependenciesPending = NO;
 }
 
-/**
- ✅ 设置新的 style 定义, 如果为空，就设为默认的 style。然后如果
- self.targetTextView != nil，则执行 applyStyleDependenciesToTargetTextView
- */
+// ✅
 - (void) setStyles:(NSArray *)newStyles
 {
 	NSArray *stylesToApply = (newStyles != nil) ? newStyles : [self getDefaultStyles];
@@ -529,7 +522,8 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	else
 		_styleDependenciesPending = YES;
 }
-/** ✅ */
+
+// ✅ 获取默认的选择文本的属性。新建一个 NSTextView 来获取它的 selectedTextAttributes
 - (NSDictionary *) getDefaultSelectedTextAttributes
 {
 	static NSDictionary *cachedValue = nil;
@@ -552,7 +546,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	}
 	[_styleParsingErrors addObject:messageToAdd];
 }
-
+// ✅
 - (void) applyStylesFromStylesheet:(NSString *)stylesheet
                   withErrorHandler:(HGStyleParsingErrorCallback)errorHandler
 {
@@ -681,9 +675,7 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 	[self requestParsing];
 }
 
-/**
- ✅ 调用 applyVisibleRangeHighlighting
- */
+// ✅
 - (void) highlightNow
 {
 	[self applyVisibleRangeHighlighting];
@@ -691,12 +683,12 @@ void styleparsing_error_callback(char *error_message, int line_number, void *con
 // ✅
 - (void) activate
 {
-	// todo: throw exception if targetTextView is nil?
+	// TODO: throw exception if targetTextView is nil?
 	
 	if (self.styles == nil)
 		self.styles = [self getDefaultStyles];
-  // 设定 style 时未指定 targetTextView 会设置 _styleDependenciesPending 为true。
-  // (在 `- (void) setStyles:(NSArray *)newStyles` 中）
+    // 设定 style 时未指定 targetTextView 会设置 _styleDependenciesPending 为true。
+    // (在 `- (void) setStyles:(NSArray *)newStyles` 中）
 	if (_styleDependenciesPending)
 		[self applyStyleDependenciesToTargetTextView];
 	

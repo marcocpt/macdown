@@ -34,7 +34,7 @@
 
 static NSString * const kMPDefaultAutosaveName = @"Untitled";       /**< 新建文档的默认名字 */
 
-/** 使用 key 合成（首字母大写并加e editor 前缀）编辑器的配置 key */
+/** ✅ 使用 key 合成（首字母大写并加 editor 前缀）编辑器的配置 key */
 NS_INLINE NSString *MPEditorPreferenceKeyWithValueKey(NSString *key)
 {
     if (!key.length)
@@ -43,7 +43,7 @@ NS_INLINE NSString *MPEditorPreferenceKeyWithValueKey(NSString *key)
     NSString *rest = [key substringFromIndex:1];
     return [NSString stringWithFormat:@"editor%@%@", first, rest];
 }
-/** 定义需要观察的编辑器的keys */
+/** ✅ 定义需要观察的编辑器的 keys */
 NS_INLINE NSDictionary *MPEditorKeysToObserve()
 {
     static NSDictionary *keys = nil;
@@ -124,7 +124,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
 
 
 @implementation MPPreferences (Hoedown)
-/** 设置扩展标识位，包括编辑和预览中的显示设置*/
+/** ✅ 设置扩展标识位，包括编辑和预览中的显示设置*/
 - (int)extensionFlags
 {
     int flags = 0;
@@ -154,7 +154,7 @@ NS_INLINE NSColor *MPGetWebViewBackgroundColor(WebView *webview)
         flags |= HOEDOWN_EXT_MATH_EXPLICIT;
     return flags;
 }
-/** 根据设置中的 html 属性来确定支持哪些格式的渲染 */
+/** ✅ 根据设置中的 html 属性来确定支持哪些格式的渲染 */
 - (int)rendererFlags
 {
     int flags = 0;
@@ -196,26 +196,26 @@ typedef NS_ENUM(NSUInteger, MPWordCountType) {
 @property (strong) HGMarkdownHighlighter *highlighter;              /**< 编辑视图的渲染器 */
 @property (strong) MPRenderer *renderer;                            /**< 预览视图的渲染器 */
 @property CGFloat previousSplitRatio;                               /**< 先前的分离视图的比例，小于0代表隐藏 */
-@property BOOL manualRender;
-@property BOOL copying;
-@property BOOL printing;
+@property BOOL manualRender;                                        /**< 是手动渲染 */
+@property BOOL copying;                                             /**< 正在复制 */
+@property BOOL printing;                                            /**< 正在打印 */
 @property BOOL shouldHandleBoundsChange;                            /**< 应该处理边界的改变 */
 @property BOOL isPreviewReady;                                      /**< 预览已经就绪 */
-@property (strong) NSURL *currentBaseUrl;
+@property (strong) NSURL *currentBaseUrl;                           /**< A file that is used to resolve relative URLs within the document.当前文档路径或默认路径 */
 @property CGFloat lastPreviewScrollTop;                             /**< 预览滚动视图的顶部坐标 */
 @property (nonatomic, readonly) BOOL needsHtml;                     /**< 不是手动渲染，预览视图可见或编辑器显示 wordCountWidget */
-@property (nonatomic) NSUInteger totalWords;
-@property (nonatomic) NSUInteger totalCharacters;
-@property (nonatomic) NSUInteger totalCharactersNoSpaces;
+@property (nonatomic) NSUInteger totalWords;                        /**< ✅ 总单词数（使用 JJPluralForm 处理过） */
+@property (nonatomic) NSUInteger totalCharacters;                   /**< ✅ 总字符词数（使用 JJPluralForm 处理过） */
+@property (nonatomic) NSUInteger totalCharactersNoSpaces;           /**< ✅ 总非空字符词数（使用 JJPluralForm 处理过） */
 @property (strong) NSMenuItem *wordsMenuItem;                       /**< wordCountWidget 中的统计词菜单 */
 @property (strong) NSMenuItem *charMenuItem;                        /**< wordCountWidget 中的统计字符菜单 */
 @property (strong) NSMenuItem *charNoSpacesMenuItem;                /**< wordCountWidget 中的统计字符（不含空格）菜单 */
-@property (nonatomic) BOOL needsToUnregister;                       /**< 需要取消注册（键值绑定） */
-@property (nonatomic) BOOL alreadyRenderingInWeb;
+@property (nonatomic) BOOL needsToUnregister;                       /**< 需要取消注册（键值绑定）释放解析器等。具体查看 close 方法 */
+@property (nonatomic) BOOL alreadyRenderingInWeb;                   /**< 已经在 Web 上渲染 */
 @property (nonatomic) BOOL renderToWebPending;
 @property (strong) NSArray<NSNumber *> *webViewHeaderLocations;
 @property (strong) NSArray<NSNumber *> *editorHeaderLocations;
-@property (nonatomic) BOOL inLiveScroll;                           /**< 存在滚动 */
+@property (nonatomic) BOOL inLiveScroll;                            /**< 存在滚动 */
 
 /** Store file content in initializer until nib is loaded. 未保存的内容*/
 @property (copy) NSString *loadedString;
@@ -256,7 +256,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 @implementation MPDocument
 
 #pragma mark - Accessor
-/** ✅ 获取单例 */
+// ✅
 - (MPPreferences *)preferences
 {
     return [MPPreferences sharedInstance];
@@ -298,7 +298,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         return NO;
     return (self.previewVisible || self.preferences.editorShowWordCount);
 }
-
+// ✅
 - (void)setTotalWords:(NSUInteger)value
 {
     _totalWords = value;
@@ -308,7 +308,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [JJPluralForm pluralStringForNumber:value withPluralForms:key
                             usingPluralRule:rule localizeNumeral:NO];
 }
-
+// ✅
 - (void)setTotalCharacters:(NSUInteger)value
 {
     _totalCharacters = value;
@@ -318,7 +318,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [JJPluralForm pluralStringForNumber:value withPluralForms:key
                             usingPluralRule:rule localizeNumeral:NO];
 }
-
+// ✅
 - (void)setTotalCharactersNoSpaces:(NSUInteger)value
 {
     _totalCharactersNoSpaces = value;
@@ -436,7 +436,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     }
 
     self.needsToUnregister = YES;
-
+    // 配置统计字数小插件
     self.wordsMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL
                                              keyEquivalent:@""];
     self.charMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:NULL
@@ -444,7 +444,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     self.charNoSpacesMenuItem = [[NSMenuItem alloc] initWithTitle:@""
                                                            action:NULL
                                                     keyEquivalent:@""];
-
+    
     NSPopUpButton *wordCountWidget = self.wordCountWidget;
     [wordCountWidget removeAllItems];
     [wordCountWidget.menu addItem:self.wordsMenuItem];
@@ -828,8 +828,8 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - WebResourceLoadDelegate
-/** 如果 request 是 MathJax，则使用包中的 MathJax.js 替换 queryItems */
-- (NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
+/** ✅ WebResourceLoadDelegate： 如果 request 是 MathJax，则使用包中的 MathJax.js 替换 queryItems */
+ - (NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     
     if ([[request.URL lastPathComponent] isEqualToString:@"MathJax.js"])
@@ -905,14 +905,14 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - WebPolicyDelegate
-/** 点击链接时打开浏览器 */
+/** ✅ Delegate Routes a navigation action internally or to an external viewer. 点击链接或每次更新内容都会执行，只处理点击链接事件 */
 - (void)webView:(WebView *)webView
                 decidePolicyForNavigationAction:(NSDictionary *)information
         request:(NSURLRequest *)request frame:(WebFrame *)frame
                 decisionListener:(id<WebPolicyDecisionListener>)listener
 {
     switch ([information[WebActionNavigationTypeKey] integerValue])
-    {
+    {   // 点击链接时执行
         case WebNavigationTypeLinkClicked:
             // If the target is exactly as the current one, ignore.
             if ([self.currentBaseUrl isEqual:request.URL])
@@ -964,16 +964,19 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 }
 
 #pragma mark - MPRendererDataSource
-/** A Boolean that indicates whether the web view is loading content. */
+
+/// ✅
 - (BOOL)rendererLoading {
 	return self.preview.loading;
 }
-/** 编辑视图中的原始文本 */
+
+/// ✅
 - (NSString *)rendererMarkdown:(MPRenderer *)renderer
 {
     return self.editor.string;
 }
-/** HTML渲染器的标题 */
+
+/// ✅
 - (NSString *)rendererHTMLTitle:(MPRenderer *)renderer
 {
     NSString *n = self.fileURL.lastPathComponent.stringByDeletingPathExtension;
@@ -982,62 +985,73 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - MPRendererDelegate
-/** 获取配置中的 extensionFlags ，包括编辑和预览设置中的扩展语法设置*/
+
+/// ✅
 - (int)rendererExtensions:(MPRenderer *)renderer
 {
     return self.preferences.extensionFlags;
 }
-/** Converts " or ' to left or right quote。Markdown 设置中：“Smartpants” */
+
+/// ✅
 - (BOOL)rendererHasSmartyPants:(MPRenderer *)renderer
 {
     return self.preferences.extensionSmartyPants;
 }
-/** 监测 TOC 元素。Rendering 设置中：“Detect table of contents token” */
+
+/// ✅
 - (BOOL)rendererRendersTOC:(MPRenderer *)renderer
 {
     return self.preferences.htmlRendersTOC;
 }
-/** 获取配置中的 htmlStyleName */
+
+/// ✅
 - (NSString *)rendererStyleName:(MPRenderer *)renderer
 {
     return self.preferences.htmlStyleName;
 }
-/** 支持Jekyll front-matter(放在文件开头)。Rendering 设置中：“Detect Jekyll front-matter” */
+
+/// ✅
 - (BOOL)rendererDetectsFrontMatter:(MPRenderer *)renderer
 {
     return self.preferences.htmlDetectFrontMatter;
 }
-/**有代码块需要语法高亮。Rendering 设置中：“Syntax highlighted code block” */
+
+/// ✅
 - (BOOL)rendererHasSyntaxHighlighting:(MPRenderer *)renderer
 {
     return self.preferences.htmlSyntaxHighlighting;
 }
-/** 代码块支持Mermaid(Graph Visualization)。Rendering 设置中：“Mermaid”。*/
+
+/// ✅
 - (BOOL)rendererHasMermaid:(MPRenderer *)renderer
 {
     return self.preferences.htmlMermaid;
 }
-/** 代码块支持Graphviz(Graph Visualization)。Rendering 设置中：“Graphviz”。 */
+
+/// ✅
 - (BOOL)rendererHasGraphviz:(MPRenderer *)renderer
 {
     return self.preferences.htmlGraphviz;
 }
-/** 预览中的代码块附件，在右上角显示，由 MPCodeBlockAccessoryType 定义。Rendering 设置中：Accessory 选择 */
+
+/// ✅
 - (MPCodeBlockAccessoryType)rendererCodeBlockAccesory:(MPRenderer *)renderer
 {
     return self.preferences.htmlCodeBlockAccessory;
 }
-/** 代码块支持MathJax。Rendering 设置中：“TeX-like math syntax” */
+
+/// ✅
 - (BOOL)rendererHasMathJax:(MPRenderer *)renderer
 {
     return self.preferences.htmlMathJax;
 }
-/** 获取配置中的 htmlHighlightingThemeName */
+
+/// ✅
 - (NSString *)rendererHighlightingThemeName:(MPRenderer *)renderer
 {
     return self.preferences.htmlHighlightingThemeName;
 }
-/** 使用已渲染的 html 文本在预览视图中显示。当前未实现局部替换 */
+/// ✅
 - (void)renderer:(MPRenderer *)renderer didProduceHTMLOutput:(NSString *)html
 {
     if (self.alreadyRenderingInWeb)
@@ -1121,7 +1135,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     if (self.needsHtml)
         [self.renderer parseAndRenderLater];
 }
-/** NSUserDefaultsDidChangeNotification 通知执行的方法。用来更新渲染预览视图 */
+/** ✅ NSUserDefaultsDidChangeNotification 通知执行的方法。用来更新渲染预览视图 */
 - (void)userDefaultsDidChange:(NSNotification *)notification
 {
     MPRenderer *renderer = self.renderer;
@@ -1141,7 +1155,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [renderer renderIfPreferencesChanged];
     }
 }
-/** NSViewFrameDidChangeNotification 通知执行的方法。如果 editorWidthLimited，则调整 textContainerInset */
+/** ✅ NSViewFrameDidChangeNotification 通知执行的方法。如果 editorWidthLimited，则调整 textContainerInset */
 - (void)editorFrameDidChange:(NSNotification *)notification
 {
     if (self.preferences.editorWidthLimited)
@@ -1199,10 +1213,11 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
 
 
 #pragma mark - KVO
-/** Informs the observing object when the value at the specified key path relative to the observed object has changed. */
+/** ✅ override: Informs the observing object when the value at the specified key path relative to the observed object has changed. 在 windowControllerDidLoadNib 方法中添加了编辑器配置和编辑器关键字的观察属性。*/
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
                         change:(NSDictionary *)change context:(void *)context
 {
+    // 是编辑器关键字
     if (object == self.editor)
     {
         if (!self.highlighter.isActive)
@@ -1212,6 +1227,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setObject:value forKey:preferenceKey];
     }
+    // 是编辑器配置
     else if (object == [NSUserDefaults standardUserDefaults])
     {
         if (self.highlighter.isActive)
@@ -1530,11 +1546,11 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
         [self setSplitViewDividerLocation:self.previousSplitRatio];
     }
 }
-/** 根据 changeKey 来调用不同的配置，如果 changeKey 为空，则大部分的配置都调用 */
+/** ✅ 根据 changeKey（值只用来做判断） 来调用不同的配置，如果 changeKey 为空，则大部分的配置都调用 */
 - (void)setupEditor:(NSString *)changedKey
 {
     [self.highlighter deactivate];
-
+    // 脚注扩展设置
     if (!changedKey || [changedKey isEqualToString:@"extensionFootnotes"])
     {
         int extensions = pmh_EXT_NOTES;
@@ -1542,7 +1558,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
             extensions = pmh_EXT_NONE;
         self.highlighter.extensions = extensions;
     }
-
+    // 调整编辑器可编辑区域的偏移
     if (!changedKey || [changedKey isEqualToString:@"editorHorizontalInset"]
             || [changedKey isEqualToString:@"editorVerticalInset"]
             || [changedKey isEqualToString:@"editorWidthLimited"]
@@ -1550,7 +1566,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     {
         [self adjustEditorInsets];
     }
-
+    // 应用主题，执行高亮
     if (!changedKey || [changedKey isEqualToString:@"editorBaseFontInfo"]
             || [changedKey isEqualToString:@"editorStyleName"]
             || [changedKey isEqualToString:@"editorLineSpacing"])
@@ -1577,19 +1593,19 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
                     self.preferences.editorStyleName = nil;
                 }];
         }
-
+        // TODO: 作用？？
         CALayer *layer = [CALayer layer];
         CGColorRef backgroundCGColor = self.editor.backgroundColor.CGColor;
         if (backgroundCGColor)
             layer.backgroundColor = backgroundCGColor;
         self.editorContainer.layer = layer;
     }
-    
+    // TODO: 缩放 WebView ？
     if ([changedKey isEqualToString:@"editorBaseFontInfo"])
     {
         [self scaleWebview];
     }
-
+    // 编辑器显示字数
     if (!changedKey || [changedKey isEqualToString:@"editorShowWordCount"])
     {
         if (self.preferences.editorShowWordCount)
@@ -1604,7 +1620,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
             self.editorPaddingBottom.constant = 0.0;
         }
     }
-
+    // TODO: 作用？
     if (!changedKey || [changedKey isEqualToString:@"editorScrollsPastEnd"])
     {
         self.editor.scrollsPastEnd = self.preferences.editorScrollsPastEnd;
@@ -1616,7 +1632,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
             contentRect.size.width = minSize.width;
         self.editor.frame = contentRect;
     }
-
+    // 编辑器视图绑定编辑器 keys
     if (!changedKey)
     {
         NSClipView *contentView = self.editor.enclosingScrollView.contentView;
@@ -1632,7 +1648,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
             [self.editor setValue:value forKey:key];
         }
     }
-
+    // 编辑视图切换左右位置
     if (!changedKey || [changedKey isEqualToString:@"editorOnRight"])
     {
         BOOL editorOnRight = self.preferences.editorOnRight;
@@ -1655,7 +1671,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     [self.highlighter activate];
     self.editor.automaticLinkDetectionEnabled = NO;
 }
-/** 根据 editorMaximumWidth 属性调节 editorHorizontalInset */
+/** ✅ 根据 editorMaximumWidth 属性调节 editorHorizontalInset */
 - (void)adjustEditorInsets
 {
     CGFloat x = self.preferences.editorHorizontalInset;
@@ -1900,7 +1916,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
                                        withTemplate:@"-"];
     return title;
 }
-
+/// ✅ 计算预览视图中的文本字数。
 - (void)updateWordCount
 {
     DOMNodeTextCount count = self.preview.mainFrame.DOMDocument.textCount;
@@ -1912,7 +1928,7 @@ static void (^MPGetPreviewLoadingCompletionHandler(MPDocument *doc))()
     if (self.isPreviewReady)
         self.wordCountWidget.enabled = YES;
 }
-
+/// ✅ currentBaseUrl 与 another 是否相等。比较指针或字符串内容
 - (BOOL)isCurrentBaseUrl:(NSURL *)another
 {
     NSString *mine = self.currentBaseUrl.absoluteBaseURLString;
@@ -1933,7 +1949,7 @@ the current file is not saved anywhere yet. Save the \
 current file somewhere to enable this feature.", \
 @"preview navigation error information")
 
-
+/// ✅ 根据 url 打开或创建文件。
 - (void)openOrCreateFileForUrl:(NSURL *)url
 {
     // Simply open the file if it is not local, or exists already.

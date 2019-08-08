@@ -18,14 +18,14 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 
 
 @interface MPAsset ()
-@property (strong) NSURL *url;                    /**< 资源文件的 url 路径 */
-@property (copy, nonatomic) NSString *typeName;   /**< 资源文件的类型名，当类型名为空时，会设置为默认类型名 */
-@property (readonly) NSString *defaultTypeName;   /**< 资源文件默认的类型名 kMPPlainType */
+@property (strong) NSURL *url;                    /**< ✅ 资源文件的 url 路径 */
+@property (copy, nonatomic) NSString *typeName;   /**< ✅ 资源文件的类型名，当类型名为空时，会设置为默认类型名 */
+@property (readonly) NSString *defaultTypeName;   /**< ✅ 资源文件默认的类型名 kMPPlainType */
 @end
 
 
 @implementation MPAsset
-/** 返回类型名，如果为空就返回默认的类型名 */
+// ✅
 - (NSString *)typeName
 {
     return _typeName ? _typeName : self.defaultTypeName;
@@ -36,12 +36,12 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
     return kMPPlainType;
 }
 
-/** 使用 url 和 typeName 初始化 MPAsset */
+// ✅
 + (instancetype)assetWithURL:(NSURL *)url andType:(NSString *)typeName
 {
     return [[self alloc] initWithURL:url andType:typeName];
 }
-/** 使用 url 和 typeName 初始化 MPAsset */
+// ✅
 - (instancetype)initWithURL:(NSURL *)url andType:(NSString *)typeName
 {
     self = [super init];
@@ -56,7 +56,7 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 {
     return [self initWithURL:nil andType:nil];
 }
-/** 产生 MPAssetOption 的 Handlebars 模板， 子类必须覆盖此方法*/
+/** ✅ 产生 MPAssetOption 的 Handlebars 模板， 子类必须覆盖此方法*/
 - (NSString *)templateForOption:(MPAssetOption)option
 {
     // `_cmd` 在 Objective-C 的方法中表示当前方法的 selector
@@ -67,7 +67,7 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                    reason:reason userInfo:nil];
 }
-/** 依据 option 生成上下文，并调用 templateForOption: 方法生成模板文件，最后使用 HBHandlebars 解析模板 */
+// ✅
 - (NSString *)htmlForOption:(MPAssetOption)option
 {
     NSMutableDictionary *context =
@@ -111,12 +111,12 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 {
     return kMPCSSType;
 }
-/** 调用父类的初始化方法，使用 url 和 kMPCSSType 初始化 MPAsset */
+// ✅
 + (instancetype)CSSWithURL:(NSURL *)url
 {
     return [super assetWithURL:url andType:kMPCSSType];
 }
-/** 产生 MPAssetOption 的 handlebars 模板 */
+/** ✅ 产生 MPAssetOption 的 handlebars 模板 */
 - (NSString *)templateForOption:(MPAssetOption)option
 {
     NSString *template = nil;
@@ -149,12 +149,12 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 {
     return kMPJavaScriptType;
 }
-/** 调用父类的初始化方法，使用 url 和 kMPJavaScriptType 初始化 MPScript */
+// ✅ 
 + (instancetype)javaScriptWithURL:(NSURL *)url
 {
     return [super assetWithURL:url andType:kMPJavaScriptType];
 }
-/** 产生 MPAssetOption 的 handlebars 模板 */
+/** ✅ 产生 MPAssetOption 的 handlebars 模板 */
 - (NSString *)templateForOption:(MPAssetOption)option
 {
     NSString *template = nil;
@@ -182,7 +182,7 @@ NSString * const kMPMathJaxConfigType = @"text/x-mathjax-config";
 
 
 @implementation MPEmbeddedScript
-/** 如果是 MPAssetFullLink，将它转换为 MPAssetEmbedded 后再调用父类方法。*/
+/** ✅ 如果是 MPAssetFullLink，将它转换为 MPAssetEmbedded 后再调用父类方法。*/
 - (NSString *)htmlForOption:(MPAssetOption)option
 {
     if (option == MPAssetFullLink)

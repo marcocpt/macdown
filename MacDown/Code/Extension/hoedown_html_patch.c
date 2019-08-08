@@ -17,8 +17,8 @@
     (opt->flags & HOEDOWN_HTML_BLOCKCODE_INFORMATION)
 #define USE_TASK_LIST(opt) (opt->flags & HOEDOWN_HTML_USE_TASK_LIST)
 
-// rndr_blockcode from HEAD. The "language-" prefix in class in needed to make
-// the HTML compatible with Prism.
+/// rndr_blockcode from HEAD. The "language-" prefix in class in needed to make
+/// the HTML compatible with Prism.
 void hoedown_patch_render_blockcode(
     hoedown_buffer *ob, const hoedown_buffer *text, const hoedown_buffer *lang,
     const hoedown_renderer_data *data)
@@ -88,8 +88,8 @@ void hoedown_patch_render_blockcode(
     hoedown_buffer_free(back);
 }
 
-// Supports task list syntax if HOEDOWN_HTML_USE_TASK_LIST is on.
-// Implementation based on hoextdown.
+/// Supports task list syntax if HOEDOWN_HTML_USE_TASK_LIST is on.
+/// Implementation based on hoextdown.
 void hoedown_patch_render_listitem(
     hoedown_buffer *ob, const hoedown_buffer *text, hoedown_list_flags flags,
     const hoedown_renderer_data *data)
@@ -144,7 +144,7 @@ void hoedown_patch_render_listitem(
 	HOEDOWN_BUFPUTSL(ob, "</li>\n");
 }
 
-// Adds a "toc" class to the outmost UL element to support TOC styling.
+/// Adds a "toc" class to the outmost UL element to support TOC styling.
 void hoedown_patch_render_toc_header(
     hoedown_buffer *ob, const hoedown_buffer *content, int level,
     const hoedown_renderer_data *data)

@@ -32,7 +32,7 @@ static NSString * const kMPPrismPluginDirectory = @"Prism/plugins";
 static size_t kMPRendererNestingLevel = SIZE_MAX;
 static int kMPRendererTOCLevel = 6;  // h1 to h6.
 
-/** 获取 Extensions 目录中的资源路径 */
+/** ✅ 获取 Extensions 目录中的资源路径 */
 NS_INLINE NSURL *MPExtensionURL(NSString *name, NSString *extension)
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -40,7 +40,7 @@ NS_INLINE NSURL *MPExtensionURL(NSString *name, NSString *extension)
                            subdirectory:@"Extensions"];
     return url;
 }
-/** 获取 Prism（语法高亮插件）中的资源路径 */
+/** ✅ 获取 Prism（语法高亮插件）中的资源路径 */
 NS_INLINE NSURL *MPPrismPluginURL(NSString *name, NSString *extension)
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -58,19 +58,19 @@ NS_INLINE NSURL *MPPrismPluginURL(NSString *name, NSString *extension)
                     subdirectory:dirPath];
     return url;
 }
-
+/// ✅ 获取包中对应语言的 js 文件。包含基础和扩展
 NS_INLINE NSArray *MPPrismScriptURLsForLanguage(NSString *language)
 {
     NSURL *baseUrl = nil;
     NSURL *extraUrl = nil;
     NSBundle *bundle = [NSBundle mainBundle];
-
+    // 根据 language 生成对应的文件名
     language = [language lowercaseString];
     NSString *baseFileName =
         [NSString stringWithFormat:@"prism-%@", language];
     NSString *extraFileName =
         [NSString stringWithFormat:@"prism-%@-extras", language];
-
+    // 判断包含的文件扩展名是 min.js 还是 js
     for (NSString *ext in @[@"min.js", @"js"])
     {
         if (!baseUrl)
@@ -92,7 +92,8 @@ NS_INLINE NSArray *MPPrismScriptURLsForLanguage(NSString *language)
         [urls addObject:extraUrl];
     return urls;
 }
-/** markdown 文本转换为 html 格式文本，并处理 Smartpants，TOC 和 frontMatter 。*/
+
+/** ✅ markdown 文本转换为 html 格式文本，并处理 Smartpants，TOC 和 frontMatter 。*/
 NS_INLINE NSString *MPHTMLFromMarkdown(
     NSString *text, int flags, BOOL smartypants, NSString *frontMatter,
     hoedown_renderer *htmlRenderer, hoedown_renderer *tocRenderer)
@@ -143,7 +144,7 @@ NS_INLINE NSString *MPHTMLFromMarkdown(
     
     return result;
 }
-/** 生成渲染后的 HTML，包含 title、style、body 和 script */
+/** ✅ 生成渲染后的 HTML，包含 title、style、body 和 script */
 NS_INLINE NSString *MPGetHTML(
     NSString *title, NSString *body, NSArray *styles, MPAssetOption styleopt,
     NSArray *scripts, MPAssetOption scriptopt)
@@ -202,16 +203,16 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 
 @interface MPRenderer ()
 
-@property (strong) NSMutableArray *currentLanguages;
+@property (strong) NSMutableArray *currentLanguages;    /**< 文件中所有支持的代码块的语言 */
 @property (readonly) NSArray *baseStylesheets;          /**< MPStyleSheet 类型数组。 rendererStyleName: 获取 style name */
 @property (readonly) NSArray *prismStylesheets;         /**< 添加代码语法高亮、代码块行数和代码块显示语言标签的 css 文件 */
-@property (readonly) NSArray *prismScripts;
-@property (readonly) NSArray *mathjaxScripts;
-@property (readonly) NSArray *mermaidStylesheets;
-@property (readonly) NSArray *mermaidScripts;
-@property (readonly) NSArray *graphvizScripts;
-@property (readonly) NSArray *stylesheets;
-@property (readonly) NSArray *scripts;
+@property (readonly) NSArray *prismScripts;             /**< 添加代码语法高亮(prism-core.min + ... )、代码块行数和代码块显示语言标签的 js 文件 */
+@property (readonly) NSArray *mathjaxScripts;           /**< 数学公式脚本 */
+@property (readonly) NSArray *mermaidStylesheets;       /**< mermaid(画流程图）的 css, 返回 MPStyleSheet 类型数组 */
+@property (readonly) NSArray *mermaidScripts;           /**< 图形化脚本 */
+@property (readonly) NSArray *graphvizScripts;          /**< 图形化脚本 */
+@property (readonly) NSArray *stylesheets;              /**< 样式表 */
+@property (readonly) NSArray *scripts;                  /**< 根据配置添加 tasklist.js、 self.prismScripts、self.mermaidScripts、self.graphvizScripts 和 self.mathjaxScripts */
 @property (copy) NSString *currentHtml;                 /**< parseMarkdown: 函数中解析 markdown 后生成的 html 字符串 */
 @property (strong) NSOperationQueue *parseQueue;        /**< 解析队列 */
 @property int extensions;
@@ -229,7 +230,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 
 @end
 
-
+/// 如果 languageMap 有对 lang 的支持，则添加到 languages 中。会调用多次来添加文件中所有的代码块的语言
 NS_INLINE void add_to_languages(
     NSString *lang, NSMutableArray *languages, NSDictionary *languageMap)
 {
@@ -303,7 +304,8 @@ NS_INLINE hoedown_buffer *language_addition(
     
     return mapped;
 }
-/** 使用 MPRenderer 创建 HTML hoedown 渲染器 */
+
+/** ✅ 使用 MPRenderer 创建 HTML hoedown 渲染器 */
 NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
 {
     int flags = renderer.rendererFlags;
@@ -320,7 +322,8 @@ NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
     ((hoedown_html_renderer_state *)htmlRenderer->opaque)->opaque = extra;
     return htmlRenderer;
 }
-/** 创建 HTML 的 TOC 渲染器 */
+
+/** ✅ 创建 HTML 的 TOC 渲染器 */
 NS_INLINE hoedown_renderer *MPCreateHTMLTOCRenderer()
 {
     hoedown_renderer *tocRenderer =
@@ -356,7 +359,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 }
 
 #pragma mark - Accessor
-/** MPStyleSheet 类型数组。 rendererStyleName: 获取默认的 style name，加入到数组中 */
+// ✅
 - (NSArray *)baseStylesheets
 {
     NSString *defaultStyleName =
@@ -368,7 +371,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     [stylesheets addObject:[MPStyleSheet CSSWithURL:defaultStyle]];
     return stylesheets;
 }
-/** 添加代码语法高亮、代码块行数和代码块显示语言标签的 css 文件 */
+// ✅
 - (NSArray *)prismStylesheets
 {
     NSString *name = [self.delegate rendererHighlightingThemeName:self];
@@ -391,7 +394,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 
     return stylesheets;
 }
-/** 添加代码语法高亮(prism-core.min + ... )、代码块行数和代码块显示语言标签的 js 文件 */
+// ✅
 - (NSArray *)prismScripts
 {
     NSBundle *bundle = [NSBundle mainBundle];
@@ -399,17 +402,19 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
                            subdirectory:kMPPrismScriptDirectory];
     MPAsset *script = [MPScript javaScriptWithURL:url];
     NSMutableArray *scripts = [NSMutableArray arrayWithObject:script];
+    // 添加脚本语法高亮文件
     for (NSString *language in self.currentLanguages)
     {
         for (NSURL *url in MPPrismScriptURLsForLanguage(language))
             [scripts addObject:[MPScript javaScriptWithURL:url]];
     }
-
+    // 添加代码块显示行数的脚本
     if (self.rendererFlags & HOEDOWN_HTML_BLOCKCODE_LINE_NUMBERS)
     {
         NSURL *url = MPPrismPluginURL(@"line-numbers", @"js");
         [scripts addObject:[MPScript javaScriptWithURL:url]];
     }
+    // 添加代码块显示语言的脚本
     if ([self.delegate rendererCodeBlockAccesory:self]
         == MPCodeBlockAccessoryLanguageName)
     {
@@ -418,7 +423,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     }
     return scripts;
 }
-
+// ✅
 - (NSArray *)mathjaxScripts
 {
     NSMutableArray *scripts = [NSMutableArray array];
@@ -433,7 +438,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     [scripts addObject:[MPScript javaScriptWithURL:url]];
     return scripts;
 }
-/** mermaid(画流程图）的 css, 返回 MPStyleSheet 类型数组 */
+// ✅
 - (NSArray *)mermaidStylesheets
 {
     NSMutableArray *stylesheets = [NSMutableArray array];
@@ -443,7 +448,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     
     return stylesheets;
 }
-
+// ✅
 - (NSArray *)mermaidScripts
 {
     // TODO
@@ -460,7 +465,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     
     return scripts;
 }
-
+// ✅
 - (NSArray *)graphvizScripts
 {
     // TODO
@@ -477,7 +482,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     
     return scripts;
 }
-/** 根据配置添加 self.baseStylesheets、self.prismStylesheets、self.mermaidStylesheets 和 show-information.css */
+/** ✅ 根据配置添加 self.baseStylesheets、self.prismStylesheets、self.mermaidStylesheets 和 show-information.css */
 - (NSArray *)stylesheets
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -501,11 +506,12 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     }
     return stylesheets;
 }
-/** 根据配置添加 tasklist.js、 self.prismScripts、self.mermaidScripts、self.graphvizScripts 和 self.mathjaxScripts */
+// ✅
 - (NSArray *)scripts
 {
     id<MPRendererDelegate> d = self.delegate;
     NSMutableArray *scripts = [NSMutableArray array];
+    // 是否添加任务列表脚本
     if (self.rendererFlags & HOEDOWN_HTML_USE_TASK_LIST)
     {
         NSURL *url = MPExtensionURL(@"tasklist", @"js");
@@ -531,11 +537,12 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
 }
 
 #pragma mark - Public
-/** 延时渲染编辑器文本 */
+
+/** ✅ 使用 parseQueue 延时渲染编辑器文本 */
 - (void)parseAndRenderWithMaxDelay:(NSTimeInterval)maxDelay {
     [self.parseQueue cancelAllOperations];
     [self.parseQueue addOperationWithBlock:^{
-        // Fetch the markdown (from the main thread)
+        // Fetch the markdown (from the main thread). TODO: 为什么要在主线程?
         __block NSString *markdown;
         dispatch_sync(dispatch_get_main_queue(), ^{
             markdown = [[self.dataSource rendererMarkdown:self] copy];
@@ -560,17 +567,20 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         });
     }];
 }
-/** 立即渲染编辑文本 */
+
+/** ✅ 立即渲染编辑文本 */
 - (void)parseAndRenderNow
 {
     [self parseAndRenderWithMaxDelay:0];
 }
-/** 延时0.5s渲染 */
+
+/** ✅ 延时0.5s渲染 */
 - (void)parseAndRenderLater
 {
     [self parseAndRenderWithMaxDelay:0.5];
 }
-/** 如果配置改变就执行 parseMarkdown: 来解析正文 */
+
+/// ✅
 - (void)parseIfPreferencesChanged
 {
     id<MPRendererDelegate> delegate = self.delegate;
@@ -582,7 +592,8 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         [self parseMarkdown:[self.dataSource rendererMarkdown:self]];
     }
 }
-/** 解析 markdown 文本，同时处理 frontmatter， TOC，将解析得到的 html 赋给 self.currentHtml */
+
+/** ✅ 解析 markdown 文本，同时处理 Jekyll front-matter、TOC，将解析得到的 html 赋给 self.currentHtml */
 - (void)parseMarkdown:(NSString *)markdown {
     [self.currentLanguages removeAllObjects];
     
@@ -592,6 +603,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     BOOL hasFrontMatter = [delegate rendererDetectsFrontMatter:self];
     BOOL hasTOC = [delegate rendererRendersTOC:self];
     
+    // 排除 Jekyll front-matter
     id frontMatter = nil;
     if (hasFrontMatter)
     {
@@ -599,13 +611,18 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         frontMatter = [markdown frontMatter:&offset];
         markdown = [markdown substringFromIndex:offset];
     }
+    
+    // 生成 HTML 渲染器，如果选择了支持 TOC，则生成 TOC 渲染器。
     hoedown_renderer *htmlRenderer = MPCreateHTMLRenderer(self);
     hoedown_renderer *tocRenderer = NULL;
     if (hasTOC)
+    {
         tocRenderer = MPCreateHTMLTOCRenderer();
+    }
     self.currentHtml = MPHTMLFromMarkdown(
                                           markdown, extensions, smartypants, [frontMatter HTMLTable],
                                           htmlRenderer, tocRenderer);
+    // 释放渲染器
     if (tocRenderer)
         hoedown_html_renderer_free(tocRenderer);
     MPFreeHTMLRenderer(htmlRenderer);
@@ -615,7 +632,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     self.TOC = hasTOC;
     self.frontMatter = hasFrontMatter;
 }
-/** 如果配置改变就执行 render: */
+/// ✅
 - (void)renderIfPreferencesChanged
 {
     BOOL changed = NO;
@@ -638,7 +655,8 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     if (changed)
         [self render];
 }
-/** 调用 MPGetHTML 产生渲染后的 html 文本用于预览视图中显示 */
+
+/** ✅ 调用 MPGetHTML 产生渲染后的 html 文本(包含 title、style、body 和 script)用于预览视图中显示 */
 - (void)render
 {
     id<MPRendererDelegate> delegate = self.delegate;

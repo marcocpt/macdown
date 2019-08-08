@@ -77,7 +77,7 @@ void pmh_free_elements(pmh_element **elems);
 char *pmh_element_name_from_type(pmh_element_type type);
 
 /**
-* \brief Get element type from a name
+* \brief ✅ Get element type from a name
 * 
 * \param[in]  name  The name of the type.
 * 

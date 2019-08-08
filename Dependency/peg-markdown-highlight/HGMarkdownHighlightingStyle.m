@@ -14,7 +14,7 @@ NSString * const HGFontInformationNameKey = @"HGFontInformationNameKey";
 NSString * const HGFontInformationSizeKey = @"HGFontInformationSizeKey";
 
 @implementation HGMarkdownHighlightingStyle
-
+// ✅
 + (NSColor *) colorFromARGBColor:(pmh_attr_argb_color *)argb_color
 {
 	return [NSColor colorWithDeviceRed:(argb_color->red / 255.0)
@@ -22,7 +22,7 @@ NSString * const HGFontInformationSizeKey = @"HGFontInformationSizeKey";
 								  blue:(argb_color->blue / 255.0)
 								 alpha:(argb_color->alpha / 255.0)];
 }
-
+// ✅
 - (instancetype) initWithType:(pmh_element_type)elemType
               attributesToAdd:(NSDictionary *)toAdd
                      toRemove:(NSArray *)toRemove
@@ -38,7 +38,7 @@ NSString * const HGFontInformationSizeKey = @"HGFontInformationSizeKey";
 	
 	return self;
 }
-
+// ✅
 - (instancetype) initWithStyleAttributes:(pmh_style_attribute *)attributes
                                 baseFont:(NSFont *)baseFont
 {
@@ -52,8 +52,8 @@ NSString * const HGFontInformationSizeKey = @"HGFontInformationSizeKey";
 	NSMutableDictionary *toAdd = [NSMutableDictionary dictionary];
 	NSString *fontName = nil;
 	CGFloat fontSize = 0;
-	BOOL fontSizeIsRelative = NO;
-	
+	BOOL fontSizeIsRelative = NO;   /**< 是相对的字体尺寸（+、-） */
+	// 获取要添加的属性
 	while (cur != NULL)
 	{
 		if (cur->type == pmh_attr_type_foreground_color)

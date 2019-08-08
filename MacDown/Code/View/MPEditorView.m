@@ -8,7 +8,7 @@
 
 #import "MPEditorView.h"
 
-/** 判断 NSRect 是否相等（比较长、宽和 origin ） */
+/** ✅ 判断 NSRect 是否相等（比较长、宽和 origin ） */
 NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 {
     return (r1.origin.x == r2.origin.x && r1.origin.y == r2.origin.y
@@ -92,7 +92,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
     return YES;
 }
 
-/** 滚动可超过文档底部。Editor 设置中："Scroll past end"。 */
+// ✅
 - (void)setScrollsPastEnd:(BOOL)scrollsPastEnd
 {
     @synchronized(self) {
@@ -110,7 +110,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         }
     }
 }
-/** 如果 _contentRect 等于 NSZeroRect，就返回 self.frame，否则返回 _contentRect */
+// ✅
 - (NSRect)contentRect
 {
     @synchronized(self) {
@@ -126,7 +126,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
         _contentRect = rect;
     }
 }
-/** ✅ ovarride: 如果滚动可超过文档底部，则高度尺寸增加*/
+// ✅ ovarride: 如果滚动可超过文档底部，则高度尺寸增加
 - (void)setFrameSize:(NSSize)newSize
 {
     if (self.scrollsPastEnd)
@@ -141,7 +141,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
     [super setFrameSize:newSize];
 }
 
-/** Overriden to perform extra operation on initial text setup.
+/** ✅ Overriden to perform extra operation on initial text setup.
  *
  * When we first launch the editor, -didChangeText will *not* be called, so we
  * override this to perform required resizing. The -updateContentRect is wrapped
@@ -180,7 +180,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 
 
 #pragma mark - Private
-/** 实现滚动可超过文档底部的逻辑 */
+/** ✅ 实现滚动可超过文档底部的逻辑 */
 - (void)updateContentGeometry
 {
     static NSCharacterSet *visibleCharacterSet = nil;

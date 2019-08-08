@@ -14,6 +14,7 @@
 
 - (void)setDividerColor:(NSColor *)color;
 
+/// ✅ 交换左右视图的位置
 - (void)swapViews;
 
 @end

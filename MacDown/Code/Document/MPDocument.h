@@ -12,7 +12,7 @@
 
 @interface MPDocument : NSDocument
 
-@property (nonatomic, readonly) MPPreferences *preferences;
+@property (nonatomic, readonly) MPPreferences *preferences; /**< 获取单例配置 */
 @property (readonly) BOOL previewVisible;
 @property (readonly) BOOL editorVisible;
 

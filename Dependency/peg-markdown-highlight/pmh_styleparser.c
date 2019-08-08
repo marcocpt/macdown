@@ -23,14 +23,22 @@
 #define pmhsp_PRINTF(x, ...)
 #endif
 
+/**
+ ✅ 按格式输出字符串
+ 
+ vasprintf is not in the C standard nor in POSIX so we provide our own
 
-// vasprintf is not in the C standard nor in POSIX so we provide our own
+ @param strptr 待输出的字符串
+ @param fmt 字符串格式
+ @param argptr 字符串格式中的参数列表
+ @return strptr 的长度（不包括终止符）
+ */
 static int our_vasprintf(char **strptr, const char *fmt, va_list argptr)
 {
     int ret;
     va_list argptr2;
     *strptr = NULL;
-    
+    // 先获取长度用来分配内存
     va_copy(argptr2, argptr);
     ret = vsnprintf(NULL, 0, fmt, argptr2);
     if (ret <= 0)
@@ -48,7 +56,7 @@ static int our_vasprintf(char **strptr, const char *fmt, va_list argptr)
 
 
 
-// Parsing context data
+/// Parsing context data
 typedef struct
 {
     char *input;
@@ -65,7 +73,7 @@ typedef struct raw_attribute
     int line_number;
     struct raw_attribute *next;
 } raw_attribute;
-
+/// ✅ 新建 raw_attribute
 static raw_attribute *new_raw_attribute(char *name, char *value,
                                         int line_number)
 {
@@ -90,7 +98,7 @@ static void free_raw_attributes(raw_attribute *list)
     }
 }
 
-
+/// ✅ 报告错误信息。格式化字符串生成错误消息给 error_callback 函数
 static void report_error(style_parser_data *p_data,
                          int line_number, char *str, ...)
 {
@@ -107,7 +115,7 @@ static void report_error(style_parser_data *p_data,
 }
 
 
-
+/// ✅ 裁剪 str 的前后空字符
 static char *trim_str(char *str)
 {
     while (isspace(*str))
@@ -120,7 +128,7 @@ static char *trim_str(char *str)
     *(end+1) = '\0';
     return str;
 }
-
+/// ✅ 裁剪 str 的前后空字符，产生新的字符串
 static char *trim_str_dup(char *str)
 {
     size_t start = 0;
@@ -137,17 +145,17 @@ static char *trim_str_dup(char *str)
     
     return ret;
 }
-
+/// ✅ 复制并转化为小写字符串
 static char *strcpy_lower(char *str)
 {
-    char *low = strdup(str);
+    char *low = strdup(str); // save a copy of a string
     int i;
     int len = strlen(str);
     for (i = 0; i < len; i++)
-        *(low+i) = tolower(*(low+i));
+        *(low+i) = tolower(*(low+i)); // upper case to lower case letter conversion
     return low;
 }
-
+/// ✅ 标准化字符串（转化为小写）
 static char *standardize_str(char *str)
 {
     return strcpy_lower(trim_str(str));
@@ -155,7 +163,7 @@ static char *standardize_str(char *str)
 
 
 
-
+/// ✅ 根据16进制 rgba 生成 pmh_attr_argb_color
 static pmh_attr_argb_color *new_argb_color(int r, int g, int b, int a)
 {
     pmh_attr_argb_color *c = (pmh_attr_argb_color *)
@@ -163,6 +171,7 @@ static pmh_attr_argb_color *new_argb_color(int r, int g, int b, int a)
     c->red = r; c->green = g; c->blue = b; c->alpha = a;
     return c;
 }
+/// ✅ 将 hex 转换为 pmh_attr_argb_color
 static pmh_attr_argb_color *new_argb_from_hex(long long hex, bool has_alpha)
 {
     // 0xaarrggbb
@@ -172,6 +181,7 @@ static pmh_attr_argb_color *new_argb_from_hex(long long hex, bool has_alpha)
     int b = (hex & 0xFF);
     return new_argb_color(r,g,b,a);
 }
+/// ✅ 解析 str 转换为 pmh_attr_argb_color
 static pmh_attr_argb_color *new_argb_from_hex_str(style_parser_data *p_data,
                                                   int attr_line_number,
                                                   char *str)
@@ -186,7 +196,7 @@ static pmh_attr_argb_color *new_argb_from_hex_str(style_parser_data *p_data,
         return NULL;
     }
     char *endptr = NULL;
-    long long num = strtoll(str, &endptr, 16);
+    long long num = strtoll(str, &endptr, 16);  // 字符串转整数
     if (*endptr != '\0') {
         report_error(p_data, attr_line_number,
                      "Value '%s' is not a valid color value: the character "
@@ -197,12 +207,12 @@ static pmh_attr_argb_color *new_argb_from_hex_str(style_parser_data *p_data,
     }
     return new_argb_from_hex(num, (len == 8));
 }
-
+/// ✅ 新建 pmh_attr_value
 static pmh_attr_value *new_attr_value()
 {
     return (pmh_attr_value *)malloc(sizeof(pmh_attr_value));
 }
-
+/// ✅ 新建 pmh_attr_font_styles
 static pmh_attr_font_styles *new_font_styles()
 {
     pmh_attr_font_styles *ret = (pmh_attr_font_styles *)
@@ -212,7 +222,7 @@ static pmh_attr_font_styles *new_font_styles()
     ret->underlined = false;
     return ret;
 }
-
+/// ✅ 新建 pmh_attr_font_size
 static pmh_attr_font_size *new_font_size()
 {
     pmh_attr_font_size *ret = (pmh_attr_font_size *)
@@ -221,7 +231,7 @@ static pmh_attr_font_size *new_font_size()
     ret->size_pt = 0;
     return ret;
 }
-
+/// ✅ 新建 pmh_style_attribute
 static pmh_style_attribute *new_attr(char *name, pmh_attr_type type)
 {
     pmh_style_attribute *attr = (pmh_style_attribute *)malloc(sizeof(pmh_style_attribute));
@@ -266,6 +276,7 @@ static void free_style_attributes(pmh_style_attribute *list)
 
 
 #define IF_ATTR_NAME(x) if (strcmp(x, name) == 0)
+// ✅
 pmh_attr_type pmh_attr_type_from_name(char *name)
 {
     IF_ATTR_NAME("color") return pmh_attr_type_foreground_color;
@@ -306,15 +317,15 @@ char *pmh_attr_name_from_type(pmh_attr_type type)
     }
 }
 
-
+/// 单链结构存储每行字符串
 typedef struct multi_value
 {
-    char *value;
-    size_t length;
-    int line_number;
+    char *value;                /**< 存储的字符串，会添加'\0' */
+    size_t length;              /**< value 字符串的长度，不包含'\0' */
+    int line_number;            /**< 行号 */
     struct multi_value *next;
 } multi_value;
-
+/// ✅ 将 input 字符串按 separateor 字符分离。“\\n\\n"为""
 static multi_value *split_multi_value(char *input, char separator)
 {
     multi_value *head = NULL;
@@ -349,7 +360,7 @@ static multi_value *split_multi_value(char *input, char separator)
     
     return head;
 }
-
+/// ✅ 释放 multi_value
 static void free_multi_value(multi_value *val)
 {
     multi_value *cur = val;
@@ -367,7 +378,7 @@ static void free_multi_value(multi_value *val)
 
 
 #define EQUALS(a,b) (strcmp(a, b) == 0)
-
+/// ✅ 解析属性。字体可以有多个值，用”,“分割
 static pmh_style_attribute *interpret_attributes(style_parser_data *p_data,
                                                  pmh_element_type lang_element_type,
                                                  raw_attribute *raw_attributes)
@@ -463,7 +474,7 @@ static pmh_style_attribute *interpret_attributes(style_parser_data *p_data,
     return attrs;
 }
 
-
+/// ✅ 解析并增加样式到 p_data 中。
 static void interpret_and_add_style(style_parser_data *p_data,
                                     char *style_rule_name,
                                     int style_rule_line_number,
@@ -509,17 +520,17 @@ static void interpret_and_add_style(style_parser_data *p_data,
 
 
 
-
+/// ✅ 是空白字符
 static bool char_is_whitespace(char c)
 {
     return (c == ' ' || c == '\t');
 }
-
+/// ✅ 是注释字符（‘#’）
 static bool char_begins_linecomment(char c)
 {
     return (c == '#');
 }
-
+/// ✅ 是注释行（‘#’ 开头）
 static bool line_is_comment(multi_value *line)
 {
     char *c;
@@ -530,7 +541,7 @@ static bool line_is_comment(multi_value *line)
     }
     return false;
 }
-
+/// ✅ 是空行
 static bool line_is_empty(multi_value *line)
 {
     char *c;
@@ -549,7 +560,7 @@ typedef struct block
     multi_value *lines;
     struct block *next;
 } block;
-
+/// ✅ 新建块
 static block *new_block()
 {
     block *ret = (block *)malloc(sizeof(block));
@@ -570,7 +581,7 @@ static void free_blocks(block *val)
         cur = next;
     }
 }
-
+/// ✅ 使用 input 生成块。以“\\n\\n"分割
 static block *get_blocks(char *input)
 {
     block *head = NULL;
@@ -580,16 +591,16 @@ static block *get_blocks(char *input)
     multi_value *discarded_lines = NULL;
     
     int line_number_counter = 1;
-    
+    // 按回车符分割
     multi_value *lines = split_multi_value(input, '\n');
     multi_value *previous_line = NULL;
     multi_value *line_cur = lines;
     while (line_cur != NULL)
     {
-        bool discard_line = false;
+        bool discard_line = false;  /**< 丢弃行标识 */
         
         line_cur->line_number = line_number_counter++;
-        
+        // 如果是空行(\n\n)，则完成一个块
         if (line_is_empty(line_cur))
         {
             discard_line = true;
@@ -604,6 +615,7 @@ static block *get_blocks(char *input)
                 previous_line->next = NULL;
             }
         }
+        // 如果是注释行且不在块中，就丢弃
         else if (line_is_comment(line_cur))
         {
             // Do not discard (i.e. free()) comment lines within blocks:
@@ -655,7 +667,7 @@ static block *get_blocks(char *input)
     ( (c) != '\0' && !char_begins_linecomment(c) && !IS_ASSIGNMENT_OP(c) )
 #define IS_ATTRIBUTE_VALUE_CHAR(c)  \
     ( (c) != '\0' && !char_begins_linecomment(c) )
-
+/// ✅ 获得样式规则名。就移除前导的空字符
 static char *get_style_rule_name(multi_value *line)
 {
     char *str = line->value;
@@ -680,7 +692,7 @@ static char *get_style_rule_name(multi_value *line)
     
     return value;
 }
-
+/// ✅ 获取行的属性名和属性值。 p_data 只用在报告错误中。
 static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
                                  char **out_attr_name, char **out_attr_value)
 {
@@ -703,7 +715,7 @@ static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
            && isspace(*(str + name_end_index - 1)))
         name_end_index--;
     
-    // Scan until just after the first assignment operator:
+    // Scan until just after the first assignment operator(':'或'='):
     size_t assignment_end_index;
     for (assignment_end_index = name_end_index;
          ( *(str + assignment_end_index) != '\0' &&
@@ -751,8 +763,8 @@ static bool parse_attribute_line(style_parser_data *p_data, multi_value *line,
                                   && ((*(x+1) & 0xFF) == 0xBB)\
                                   && ((*(x+2) & 0xFF) == 0xBF) )
 
-// - Removes UTF-8 BOM
-// - Standardizes line endings to \n
+/// ✅  - Removes UTF-8 BOM
+/// - Standardizes line endings to `\\n`
 static char *strcpy_preformat_style(char *str)
 {
     char *new_str = (char *)malloc(sizeof(char) * strlen(str) + 1);
@@ -790,7 +802,7 @@ static char *strcpy_preformat_style(char *str)
 }
 
 
-
+/// ✅ 样式解析。结果存储在 p_data->styles 中
 static void _sty_parse(style_parser_data *p_data)
 {
     // We don't have to worry about leaking the original p_data->input;
@@ -808,7 +820,7 @@ static void _sty_parse(style_parser_data *p_data)
             block_cur = block_cur->next;
             continue;
         }
-        
+        // 获得样式规则名
         pmhsp_PRINTF("  Head line (len %ld): '%s'\n",
                      header_line->length, header_line->value);
         char *style_rule_name = get_style_rule_name(header_line);
@@ -822,9 +834,9 @@ static void _sty_parse(style_parser_data *p_data)
         
         raw_attribute *attributes_head = NULL;
         raw_attribute *attributes_tail = NULL;
-        
+        // 获取块中的所有属性
         while (attr_line_cur != NULL)
-        {
+        {   // 丢弃块内的注释行
             if (line_is_comment(attr_line_cur))
             {
                 attr_line_cur = attr_line_cur->next;
@@ -875,7 +887,7 @@ static void _sty_parse(style_parser_data *p_data)
 }
 
 
-
+/// 新建 ✅ pmh_style_collection
 static pmh_style_collection *new_style_collection()
 {
     pmh_style_collection *sc = (pmh_style_collection *)
@@ -894,7 +906,7 @@ static pmh_style_collection *new_style_collection()
     
     return sc;
 }
-
+// ✅
 void pmh_free_style_collection(pmh_style_collection *coll)
 {
     free_style_attributes(coll->editor_styles);
@@ -906,7 +918,7 @@ void pmh_free_style_collection(pmh_style_collection *coll)
     free(coll->element_styles);
     free(coll);
 }
-
+/// ✅ 新建 style_parser_data
 static style_parser_data *new_style_parser_data(char *input)
 {
     style_parser_data *p_data = (style_parser_data*)
@@ -916,7 +928,7 @@ static style_parser_data *new_style_parser_data(char *input)
     p_data->styles = new_style_collection();
     return p_data;
 }
-
+// ✅ 
 pmh_style_collection *pmh_parse_styles(char *input,
                                        void(*error_callback)(char*,int,void*),
                                        void *error_callback_context)

@@ -9,7 +9,7 @@
 #import "NSDocumentController+Document.h"
 
 @implementation NSDocumentController (Document)
-
+// ✅
 - (__kindof NSDocument *)createNewEmptyDocumentForURL:(NSURL *)url
         display:(BOOL)display error:(NSError * __autoreleasing *)error
 {

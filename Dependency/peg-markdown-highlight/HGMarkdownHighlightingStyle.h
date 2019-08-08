@@ -59,15 +59,16 @@ extern NSString * const HGFontInformationSizeKey;
  */
 @interface HGMarkdownHighlightingStyle : NSObject
 
+/// ✅ pmh_attr_argb_color 转 NSColor
 + (NSColor *) colorFromARGBColor:(pmh_attr_argb_color *)argb_color;
 
-/** \brief Init a new instance. */
+/** \brief ✅ Init a new instance. 将各个输入参数传递给 self 对应的属性中 */
 - (instancetype) initWithType:(pmh_element_type)elemType
               attributesToAdd:(NSDictionary *)toAdd
                      toRemove:(NSArray *)toRemove
               fontTraitsToAdd:(NSFontTraitMask)traits;
 
-/** \brief Init a new instance based on styles from the stylesheet parser. */
+/** \brief ✅ Init a new instance based on styles from the stylesheet parser. */
 - (instancetype) initWithStyleAttributes:(pmh_style_attribute *)attributes baseFont:(NSFont *)baseFont;
 
 /** \brief The Markdown language element type these styles pertain to. */

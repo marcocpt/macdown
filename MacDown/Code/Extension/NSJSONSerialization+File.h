@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface NSJSONSerialization (File)
-
+/// ✅ 获取 url 文件中的对象
 + (id)JSONObjectWithFileAtURL:(NSURL *)url options:(NSJSONReadingOptions)opt
                         error:(NSError *__autoreleasing *)error;
 
